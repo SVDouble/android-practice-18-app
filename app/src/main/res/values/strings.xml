@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Gamestorm</string>
+    <string name="menu_logo_description">Game logo</string>
+    <string name="menu_dots_description">***</string>
+    <string name="action_rate">Rate</string>
+    <string name="action_add_favourite">Like</string>
 </resources>
