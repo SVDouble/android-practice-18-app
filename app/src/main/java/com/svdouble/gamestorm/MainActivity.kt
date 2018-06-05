@@ -17,6 +17,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_main_content.*
 
 
 const val DEBUG_LOG_KEY = "GameStormApp"
@@ -28,7 +29,22 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
+
+        /* Init toolbar */
+        setSupportActionBar(toolbar)
+        collapsing_toolbar.title = " "
+        appbar.setExpanded(true)
+
+        /* hiding & showing the title when toolbar expanded & collapsed */
+        appbar.addOnOffsetChangedListener { appBarLayout, verticalOffset ->
+            if (appBarLayout.totalScrollRange + verticalOffset == 0)
+                collapsing_toolbar.title = getString(R.string.app_name)
+            else if (toolbar.title.toString() == getString(R.string.app_name)) {
+                collapsing_toolbar.title = " "
+            }
+        }
 
         /* Initialize dataset, Manager and Adapter */
         val dataset = arrayOf(GameCard("hello", 5.0, R.drawable.ic_launcher_foreground),
@@ -48,6 +64,10 @@ class MainActivity : AppCompatActivity() {
             itemAnimator = DefaultItemAnimator()
             adapter = viewAdapter
         }
+
+        /* Init header background */
+        Glide.with(this).load(R.drawable.ic_launcher_background).into(backdrop)
+
     }
 
     inner class GridSpacingItemDecoration(private val spanCount: Int, private val spacing: Int, private val includeEdge: Boolean) :
