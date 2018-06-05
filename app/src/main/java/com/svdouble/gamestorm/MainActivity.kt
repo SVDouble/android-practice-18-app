@@ -14,13 +14,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        Log.d(DEBUG_LOG_KEY, prefs.testStringProperty)
-
         graf.setOnClickListener {
             val intent = Intent(this, CanvasActivity::class.java)
             startActivity(intent)
         }
 
+        Log.d(DEBUG_LOG_KEY, "Starting BaseCanvasActivity!")
+        startActivity(Intent(this, BaseCanvasActivity::class.java))
     }
 
 }
