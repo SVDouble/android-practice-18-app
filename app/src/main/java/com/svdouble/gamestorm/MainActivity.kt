@@ -30,11 +30,18 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val dataset = arrayOf(GameCard("hello", 5.0, R.drawable.ic_launcher_foreground))
+        /* Initialize dataset, Manager and Adapter */
+        val dataset = arrayOf(GameCard("hello", 5.0, R.drawable.ic_launcher_foreground),
+                GameCard("world", 5.0, R.drawable.ic_launcher_foreground),
+                GameCard("wow!", 1.0, R.drawable.ic_launcher_background),
+                GameCard("really!", 1.0, R.drawable.ic_launcher_background),
+                GameCard("mmm!", 1.0, R.drawable.ic_launcher_background),
+                GameCard("amazing!", 1.0, R.drawable.ic_launcher_background))
         viewManager = GridLayoutManager(this, 2)
         viewAdapter = CardAdapter(this, dataset)
         viewAdapter.notifyDataSetChanged()
 
+        /* Set recycler's options */
         recycler_view.apply {
             layoutManager = viewManager
             addItemDecoration(GridSpacingItemDecoration(2, dpToPx(10), true))
@@ -74,9 +81,9 @@ class MainActivity : AppCompatActivity() {
 }
 
 
-
 data class GameCard(val title: String, val rating: Double, val thumbnail: Int)
 
+/* Custom adapter for the RecyclerView */
 class CardAdapter(private val mContext: Context, private val dataset: Array<GameCard>) :
         RecyclerView.Adapter<CardAdapter.ViewHolder>() {
 
@@ -97,7 +104,7 @@ class CardAdapter(private val mContext: Context, private val dataset: Array<Game
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.titleView.text = dataset[position].title
-        holder.ratingView.text = dataset[position].rating.toString()
+        holder.ratingView.text = mContext.getString(R.string.rating_pattern).format(dataset[position].rating)
         Glide.with(mContext).load(dataset[position].thumbnail).into(holder.thumbnailView)
         holder.overflowView.setOnClickListener { showPopupMenu(holder.overflowView) }
     }
