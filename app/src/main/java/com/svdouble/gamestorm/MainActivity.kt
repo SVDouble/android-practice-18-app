@@ -1,5 +1,6 @@
 package com.svdouble.gamestorm
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -12,7 +13,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        Log.d(DEBUG_LOG_KEY, prefs.testStringProperty)
+        Log.d(DEBUG_LOG_KEY, "Starting BaseCanvasActivity!")
+        startActivity(Intent(this, BaseCanvasActivity::class.java))
     }
 
 }
