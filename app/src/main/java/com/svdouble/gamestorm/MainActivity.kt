@@ -12,15 +12,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContentView(R.layout.activity_main)
-
-        graf.setOnClickListener {
-            val intent = Intent(this, CanvasActivity::class.java)
-            startActivity(intent)
-        }
-
-        Log.d(DEBUG_LOG_KEY, "Starting BaseCanvasActivity!")
-        startActivity(Intent(this, BaseCanvasActivity::class.java))
+        Log.d(DEBUG_LOG_KEY, "Starting CanvasActivity!")
+        startActivity(Intent(this, CanvasActivity::class.java))
     }
 
 }
