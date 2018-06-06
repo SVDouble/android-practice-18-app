@@ -1,7 +1,5 @@
 package com.svdouble.gamestorm
 
-import android.content.Context
-import android.graphics.Rect
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
@@ -16,6 +14,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import android.content.Intent
+import android.content.Context
+import android.graphics.Rect
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main_content.*
 
