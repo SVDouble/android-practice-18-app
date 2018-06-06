@@ -60,11 +60,11 @@ class Draw2D(context: Context) : View(context) {
             mPaint.strokeWidth = 5F
             canvas.drawCircle(arg11, arg22, 27f, mPaint)
         }
-
+        //фон
         mPaint.color = Color.YELLOW
         mPaint.style = Paint.Style.FILL
         canvas.drawPaint(mPaint)
-
+        // линии
         val w: Float = width.toFloat()
         val h: Float = height.toFloat()
         var i = 0F
@@ -80,6 +80,7 @@ class Draw2D(context: Context) : View(context) {
             canvas.drawLine(0F, i, h, i, mPaint)
             i += 60F
         }
+        //текст
         shadowPaint.isAntiAlias = true
         shadowPaint.color = Color.BLUE
         shadowPaint.textSize = 45.0f
@@ -89,6 +90,7 @@ class Draw2D(context: Context) : View(context) {
         shadowPaint.textSize = 50.0f
         shadowPaint.strokeWidth = 4.0f
         canvas.drawText("$xPath    $yPath", 20f, 540f, shadowPaint)
+
         if(urg % 2 == 0)
           Circle(xPath,yPath)
         else
