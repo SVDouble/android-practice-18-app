@@ -1,5 +1,8 @@
 package com.svdouble.gamestorm
 
+import android.content.Context
+import android.content.Intent
+import android.graphics.Rect
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.DefaultItemAnimator
@@ -14,9 +17,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
-import android.content.Intent
-import android.content.Context
-import android.graphics.Rect
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main_content.*
 
@@ -109,6 +109,7 @@ class CardAdapter(private val mContext: Context, private val dataset: Array<Game
         RecyclerView.Adapter<CardAdapter.ViewHolder>() {
 
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
+        //val cardView = v.findViewById<CardView>(R.id.card_view)!!
         val titleView = v.findViewById<TextView>(R.id.title)!!
         val ratingView = v.findViewById<TextView>(R.id.rating)!!
         val thumbnailView = v.findViewById<ImageView>(R.id.thumbnail)!!
@@ -128,6 +129,7 @@ class CardAdapter(private val mContext: Context, private val dataset: Array<Game
         holder.ratingView.text = mContext.getString(R.string.rating_pattern).format(dataset[position].rating)
         Glide.with(mContext).load(dataset[position].thumbnail).into(holder.thumbnailView)
         holder.overflowView.setOnClickListener { showPopupMenu(holder.overflowView) }
+        holder.thumbnailView.setOnClickListener { mContext.startActivity(Intent(mContext, GameMenuActivity::class.java)) }
     }
 
     private fun showPopupMenu(view: View) {
