@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Gamestorm</string>
+    <string name="menu_logo_description">Game logo</string>
+    <string name="menu_dots_description">***</string>
+    <string name="action_rate">Rate</string>
+    <string name="action_add_favourite">Like</string>
+    <string name="rating_pattern">Rating: %.1f</string>
+    <string name="backdrop_title">Super game</string>
+    <string name="backdrop_subtitle">play now</string>
+    <string name="header_bg_description">Beautiful background</string>
 </resources>
