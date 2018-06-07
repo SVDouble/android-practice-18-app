@@ -23,13 +23,8 @@ class CallDrawGridCells(val points: Array<Cell2D>, val color: Int) : BaseCall()
 
 class DrawStorage(private val draw: Draw2D) {
 
-    init {
-        Log.d(TAG, "Storage created!")
-    }
-
     val drawCalls: ArrayList<BaseCall> = arrayListOf()
     fun drawFromStorage(canvas: Canvas) {
-        Log.d(TAG, "Start drawing from storage!")
         for (call in drawCalls)
             when (call) {
                 is CallDrawGridCells -> draw.fillGridCells(call, canvas)
@@ -44,6 +39,7 @@ class Draw2D(context: Context) : View(context) {
 
     val storage = DrawStorage(this)
     private var rown = 0
+    private var columnn = 0
     private val mPaint = Paint()
     private val shadowPaint = Paint()
     private var xPath: Float = 0.0f
@@ -65,25 +61,10 @@ class Draw2D(context: Context) : View(context) {
             this.xPath = event.x
             this.yPath = event.y
             Log.d(TAG, "Touch detected!")
-            urg = (urg + 1) % 2
-            /*for ( row in rows ) {
 
-                val cell = row.onTouch(event.x, event.y, urg + 1)
-                if ( cell != null ) {
+            val x = (event.x / squareSide).toInt() + 1
+            val y = (event.y / squareSide).toInt() + 1
 
-                    //var upRow = rows[ row.num - 1 ]
-                    //upRow.num
-
-                    if ( cell.num > 0 && cell.num < row.arr.size - 1)
-                        if (row.arr[cell.num - 1].type == cell.type && row.arr[cell.num + 1].type == cell.type) {
-                            row.arr[cell.num - 1].bgcolor = Color.GREEN
-                            row.arr[cell.num + 1].bgcolor = Color.GREEN
-                            cell.bgcolor = Color.GREEN
-                        }
-
-                    break
-                }
-            }*/
             this.invalidate()
         }
         return super.onTouchEvent(event)
@@ -95,8 +76,7 @@ class Draw2D(context: Context) : View(context) {
         super.onDraw(canvas)
         w = width
         h = height
-        Log.d(TAG, "width $w")
-        //фон
+
         mPaint.color = YELLOW
         mPaint.style = Paint.Style.FILL
         canvas.drawPaint(mPaint)
@@ -124,6 +104,7 @@ class Draw2D(context: Context) : View(context) {
 
         this.squareSide= squareSide
         rown = call.rows
+        columnn = call.rows
 
         mPaint.strokeWidth = 7F
         mPaint.color = RED
