@@ -1,25 +1,30 @@
 package com.svdouble.gamestorm
 
-data class Point2D(val x: Double, val y: Double)
+import android.content.Context
+import android.util.Log
+import android.view.View
 
+
+data class Cell2D(val x: Int, val y: Int)
 open class BasePlayer(val playerId: Int)
 
 abstract class GameField {
     abstract val settings: BaseSettings
 }
 
-class GameEvent(val type: EventType, player: BasePlayer, pos: Point2D) {
+class GameEvent(val type: EventType, val player: BasePlayer, val pos: Cell2D) {
     enum class EventType {
         START, STOP, PAUSE, PASS, STEP
     }
 }
 
-abstract class BaseGameDispatcher {
+abstract class BaseGameHandler {
     enum class GameState {
         INIT, RESUMED, PAUSED, STOPPED
     }
     abstract var state: GameState
     abstract val gameField: GameField
+    abstract val drawEngine: DrawEngine2D
     abstract fun dispatchEvent(event: GameEvent)
 }
 
@@ -33,7 +38,7 @@ open class BaseSettings {
 
 open class BaseGame(val gameId: Int, var title: String = "", var thumbResource: Int = -1, var rating: Float = 0f) {
 
-    private lateinit var rules: BaseGameDispatcher
+    private lateinit var rules: BaseGameHandler
     private lateinit var players: Array<BasePlayer>
 
     fun loadFromDatabase() {
@@ -52,16 +57,24 @@ class MyField : GameField() {
 
 class MyPlayer(playerId: Int, val chipId: Int) : BasePlayer(playerId)
 
-class MyGameDispatcher() : BaseGameDispatcher() {
+class MyGameHandler(val context: Context) : BaseGameHandler() {
+    override val drawEngine = DrawEngine2D(context, this)
     override var state = GameState.INIT
     override val gameField = MyField()
     override fun dispatchEvent(event: GameEvent) {
         when(event.type) {
             GameEvent.EventType.START -> {
                 state = GameState.RESUMED
-                //gameField.square_field =
+                Log.d(TAG, "Draw grid!")
+                drawEngine.storage.drawCalls.add(CallDrawGrid(5, 4, drawEngine))
             }
-            else -> TODO()
+            GameEvent.EventType.STEP -> {
+                Log.d(TAG, "Draw cross!")
+                drawEngine.storage.drawCalls.add(CallDrawChip(Cell2D(event.pos.x, event.pos.y), 0))
+                drawEngine.invalidate()
+            }
+            else -> Log.d(TAG, "Unrecognised event")
         }
     }
 }
+
