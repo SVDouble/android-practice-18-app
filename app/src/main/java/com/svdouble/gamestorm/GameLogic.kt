@@ -1,12 +1,13 @@
 package com.svdouble.gamestorm
 
 import android.content.Context
-import android.graphics.Color.BLACK
-import android.graphics.Color.GREEN
+import android.graphics.Color.*
 import android.util.Log
 
 data class Cell2D(val x: Int, val y: Int) {
     operator fun plus(n: Int) = Cell2D(x + n, y + n)
+    operator fun plus(c: Cell2D) = Cell2D(x + c.x, y + c.y)
+    fun revert() = Cell2D(y, x)
 }
 open class BasePlayer(open val playerId: Int)
 
@@ -43,11 +44,32 @@ open class BaseGame(val gameId: Int, var title: String = "", var thumbResource: 
 
 class TField : GameField() {
 
-    var rows: Int = 6
-    var columns: Int = 5
-    val t_field: Array<Array<TPlayer>> = Array(columns) { Array(rows) { TPlayer(-1, -1) } }
-    fun checkField(): Boolean {
-        return false
+    var rows: Int = 3
+    var columns: Int = 4
+    val tField: Array<Array<TPlayer>> = Array(columns) { Array(rows) { TPlayer(-1, -1) } }
+
+    var standartPatterns: ArrayList<Array<Cell2D>> = arrayListOf( // column, row
+            arrayOf(Cell2D(-1, 0), Cell2D(0, 0), Cell2D(1, 0)), // right and left
+            arrayOf(Cell2D(0, -1), Cell2D(0, 0), Cell2D(0, 1)), // bottom and top
+            arrayOf(Cell2D(-1, -1), Cell2D(0, 0), Cell2D(1, 1)), // diagonal
+            arrayOf(Cell2D(-1, 1), Cell2D(0, 0), Cell2D(1, -1))) // diagonal
+
+    fun checkField(): Array<Cell2D>? {
+        for (row in 0 until rows)
+            for (column in 0 until columns)
+                check@ for (pattern in standartPatterns) {
+                    for (cell in pattern) {
+                        val point = cell + Cell2D(column, row)
+                        if (tField[column][row].playerId == -1 // cell is not in game
+                                || point.x < 0 || point.x >= columns
+                                || point.y < 0 || point.y >= rows)
+                            continue@check
+                        else if (tField[point.x][point.y].playerId != tField[column][row].playerId)
+                            continue@check
+                    }
+                    return Array(pattern.size) {i -> pattern[i] + Cell2D(row + 1, column + 1)}
+        }
+        return null
     }
 }
 
@@ -73,14 +95,20 @@ class TGameHandler(context: Context) : BaseGameHandler() {
                 drawEngine.forwardCall(CallDrawGrid(gameField.rows, gameField.columns, BLACK))
             }
             GameEvent.EventType.STEP -> {
-                if (gameField.t_field[event.pos.x][event.pos.y] == TPlayer(-1, -1)) {
+                if (state == GameState.RESUMED && gameField.tField[event.pos.x][event.pos.y].playerId == -1) {
                     drawEngine.forwardCall(CallDrawChip(event.pos + 1, current_player.chipId))
-                    gameField.t_field[event.pos.x][event.pos.y](current_player)
-                    if (gameField.checkField())
+                    gameField.tField[event.pos.x][event.pos.y](current_player)
+                    val checkResult = gameField.checkField()
+                    if (checkResult != null) {
+                        drawEngine.forwardCall(CallDrawGridCells(checkResult, RED))
                         dispatchEvent(GameEvent(GameEvent.EventType.STOP))
+                    }
                     else
                         current_player = nextPlayer()
                 }
+            }
+            GameEvent.EventType.STOP -> {
+                state = GameState.STOPPED
             }
             else -> Log.d(TAG, "Unrecognised event")
         }
