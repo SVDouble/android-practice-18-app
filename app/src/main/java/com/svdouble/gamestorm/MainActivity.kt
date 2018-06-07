@@ -20,7 +20,6 @@ import com.bumptech.glide.Glide
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main_content.*
 
-
 const val DEBUG_LOG_KEY = "GameStormApp"
 
 class MainActivity : AppCompatActivity() {
