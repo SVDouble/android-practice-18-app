@@ -21,7 +21,7 @@ class CallDrawGrid(val rows: Int, val columns: Int, val view: View) : BaseCall()
 class CallDrawChip(val point: Cell2D, val chipId: Int) : BaseCall()
 class CallDrawGridCells(val points: Array<Cell2D>, val color: Int) : BaseCall()
 
-class DrawStorage(private val draw: Draw2D) {
+class DrawStorage(private val draw: DrawEngine2D) {
 
     val drawCalls: ArrayList<BaseCall> = arrayListOf()
     fun drawFromStorage(canvas: Canvas) {
@@ -35,7 +35,7 @@ class DrawStorage(private val draw: Draw2D) {
 }
 
 
-class Draw2D(context: Context) : View(context) {
+class DrawEngine2D(context: Context, val gameHandler: BaseGameHandler) : View(context) {
 
     val storage = DrawStorage(this)
     private var rown = 0
@@ -65,6 +65,12 @@ class Draw2D(context: Context) : View(context) {
             val x = (event.x / squareSide).toInt() + 1
             val y = (event.y / squareSide).toInt() + 1
 
+            gameHandler.dispatchEvent(GameEvent(GameEvent.EventType.STEP, BasePlayer(0), Cell2D(x, y)))
+
+            for (call in storage.drawCalls)
+                Log.d("TAG", call::class.java.toString())
+
+            Log.d(TAG, "Touch ended!")
             this.invalidate()
         }
         return super.onTouchEvent(event)
@@ -159,17 +165,18 @@ class Draw2D(context: Context) : View(context) {
     }
 }
 
-data class Cell2D(val x: Int, val y: Int)
-
 class CanvasActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val draw2D = Draw2D(this)
-        draw2D.storage.drawCalls.add(CallDrawGrid(5, 5, draw2D))
-        draw2D.storage.drawCalls.add(CallDrawChip(Cell2D(1, 2), 0))
-        draw2D.storage.drawCalls.add(CallDrawGridCells(arrayOf(Cell2D(2, 2), Cell2D(2, 3)), BLACK))
-        setContentView(draw2D)
+        val gameHandler = MyGameHandler(this)
+        //val draw2D = DrawEngine2D(this, gameHandler)
+        gameHandler.dispatchEvent(GameEvent(GameEvent.EventType.START, BasePlayer(0), Cell2D(0, 0)))
+
+        //draw2D.storage.drawCalls.add(CallDrawGrid(5, 5, draw2D))
+        //draw2D.storage.drawCalls.add(CallDrawChip(Cell2D(1, 2), 0))
+        //draw2D.storage.drawCalls.add(CallDrawGridCells(arrayOf(Cell2D(2, 2), Cell2D(2, 3)), BLACK))
+        setContentView(gameHandler.drawEngine)
     }
 }
 
