@@ -28,7 +28,7 @@
                 android:contentDescription="@string/menu_logo_description" />
 
             <TextView
-                android:id="@+id/title"
+                android:id="@+id/textViewTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/thumbnail"
@@ -41,7 +41,7 @@
                 android:id="@+id/rating"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/title"
+                android:layout_below="@id/textViewTitle"
                 android:paddingStart="@dimen/card_title_padding"
                 android:paddingEnd="@dimen/card_title_padding"
                 android:paddingBottom="@dimen/card_rating_padding_bottom"

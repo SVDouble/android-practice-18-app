@@ -4,6 +4,8 @@ import android.content.Context
 import android.graphics.Color.*
 import android.util.Log
 
+const val GAME_TICTACTOE_ID = 1
+
 data class Cell2D(val x: Int, val y: Int) {
     operator fun plus(n: Int) = Cell2D(x + n, y + n)
     operator fun plus(c: Cell2D) = Cell2D(x + c.x, y + c.y)
@@ -11,8 +13,7 @@ data class Cell2D(val x: Int, val y: Int) {
 }
 open class BasePlayer(open val playerId: Int)
 
-abstract class GameField {
-}
+abstract class GameField
 
 class GameEvent(val type: EventType, val pos: Cell2D = Cell2D(-1, -1)) {
     enum class EventType {
@@ -30,14 +31,9 @@ abstract class BaseGameHandler {
     abstract fun dispatchEvent(event: GameEvent)
 }
 
-open class BaseGame(val gameId: Int, var title: String = "", var thumbResource: Int = -1, var rating: Float = 0f) {
-
-    private lateinit var rules: BaseGameHandler
-    private lateinit var players: Array<BasePlayer>
-
-    fun loadFromDatabase() {
-        TODO()
-    }
+abstract class BaseGame(val gameId: Int, var rating: Double = 0.0, var titleRId: Int = -1, var descriptionRId: Int = -1, var thumbResourceRId: Int = -1) {
+    abstract fun startGame()
+    abstract fun generateGameCard(): GameCard
 }
 
 /* TicTacToe */
@@ -80,31 +76,32 @@ data class TPlayer(override var playerId: Int, var chipId: Int) : BasePlayer(pla
     }
 }
 
-class TGameHandler(context: Context) : BaseGameHandler() {
+class TGameHandler(private val game: TGame, context: Context) : BaseGameHandler() {
     override val drawEngine = CellularDrawEngine2D(context, this)
     override val gameField = TField()
     override var state = GameState.INIT
-    val players = arrayOf(TPlayer(0, 0), TPlayer(1, 1))
-    var current_player = players[0]
+    private lateinit var players: Array<TPlayer>
+    private var currentPlayer = 0
 
     override fun dispatchEvent(event: GameEvent) {
         when(event.type) {
             GameEvent.EventType.START -> {
                 state = GameState.RESUMED
+                players = game.getPlayers()
                 drawEngine.forwardCall(CallDrawBg(GREEN))
                 drawEngine.forwardCall(CallDrawGrid(gameField.rows, gameField.columns, BLACK))
             }
             GameEvent.EventType.STEP -> {
                 if (state == GameState.RESUMED && gameField.tField[event.pos.x][event.pos.y].playerId == -1) {
-                    drawEngine.forwardCall(CallDrawChip(event.pos + 1, current_player.chipId))
-                    gameField.tField[event.pos.x][event.pos.y](current_player)
+                    drawEngine.forwardCall(CallDrawChip(event.pos + 1, players[currentPlayer].chipId))
+                    gameField.tField[event.pos.x][event.pos.y](players[currentPlayer])
                     val checkResult = gameField.checkField()
                     if (checkResult != null) {
                         drawEngine.forwardCall(CallDrawGridCells(checkResult, RED))
                         dispatchEvent(GameEvent(GameEvent.EventType.STOP))
                     }
                     else
-                        current_player = nextPlayer()
+                        currentPlayer = nextPlayer()
                 }
             }
             GameEvent.EventType.STOP -> {
@@ -115,6 +112,25 @@ class TGameHandler(context: Context) : BaseGameHandler() {
     }
 
     private fun nextPlayer()
-            = if (current_player == players[0]) players[1] else players[0]
+            = (currentPlayer + 1) % players.size
 }
+
+
+class TGame private constructor(private val context: Context)
+    : BaseGame(GAME_TICTACTOE_ID, 5.0, R.string.game_t_title, R.string.game_t_description, R.drawable.ic_launcher_foreground) {
+    private var players = arrayOf(TPlayer(1, 0), TPlayer(2, 1)) // Hardcore mode: same chips
+    private val handler = TGameHandler(this, context)
+
+    override fun startGame() {
+        handler.dispatchEvent(GameEvent(GameEvent.EventType.START))
+    }
+
+    override fun generateGameCard() = GameCard(gameId, context.getString(titleRId), rating, thumbResourceRId)
+
+    fun getPlayers() = players
+    fun getDrawEngine() = handler.drawEngine
+
+    companion object : SingletonHolder<TGame, Context>(::TGame)
+}
+
 

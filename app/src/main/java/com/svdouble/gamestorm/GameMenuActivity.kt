@@ -11,8 +11,14 @@ class GameMenuActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game_menu)
 
-        buttonPlay.setOnClickListener { startActivity(Intent(this, CanvasActivity::class.java)) }
-        buttonSettings.setOnClickListener { startActivity(Intent(this, GameSettingsActivity::class.java))}
+        when(intent.getIntExtra(INTENT_ID_KEY, -1)) {
+            GAME_TICTACTOE_ID -> {
+                textViewTitle.text = getString(TGame.getInstance(this).titleRId)
+                textViewDescription.text = getString(TGame.getInstance(this).descriptionRId)
+                buttonPlay.setOnClickListener { startActivity(Intent(this, CanvasActivity::class.java).putExtra(INTENT_ID_KEY, GAME_TICTACTOE_ID)) }
+                buttonSettings.setOnClickListener { startActivity(Intent(this, GameSettingsActivity::class.java).putExtra(INTENT_ID_KEY, GAME_TICTACTOE_ID))}
+            }
+        }
         buttonBack.setOnClickListener { startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)) }
     }
 }
