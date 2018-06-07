@@ -2,4 +2,18 @@
     <string name="app_name">Gamestorm</string>
     <string name="coords">Coords</string>
     <string name="action_settings">Settings</string>
+    <string name="settings_title">Settings</string>
+    <string name="menu_logo_description">Game logo</string>
+    <string name="menu_dots_description">***</string>
+    <string name="action_rate">Rate</string>
+    <string name="action_add_favourite">Like</string>
+    <string name="rating_pattern">Rating: %.1f</string>
+    <string name="backdrop_title">Super game</string>
+    <string name="backdrop_subtitle">play now</string>
+    <string name="header_bg_description">Beautiful background</string>
+    <string name="gi_button_play">Play</string>
+    <string name="gi_button_settings">Settings</string>
+    <string name="gi_button_wiki">Wiki</string>
+    <string name="gi_button_scoreboard">Scoreboard</string>
+    <string name="gi_button_back">Back</string>
 </resources>
