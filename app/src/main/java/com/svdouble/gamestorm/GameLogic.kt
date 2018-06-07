@@ -44,7 +44,7 @@ open class BaseGame(val gameId: Int, var title: String = "", var thumbResource: 
 
 class TField : GameField() {
 
-    var rows: Int = 8
+    var rows: Int = 4
     var columns: Int = 8
     val tField: Array<Array<TPlayer>> = Array(columns) { Array(rows) { TPlayer(-1, -1) } }
 
