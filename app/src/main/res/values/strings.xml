@@ -16,4 +16,5 @@
     <string name="gi_button_wiki">Wiki</string>
     <string name="gi_button_scoreboard">Scoreboard</string>
     <string name="gi_button_back">Back</string>
+    <string name="title_activity_snake">Snake</string>
 </resources>

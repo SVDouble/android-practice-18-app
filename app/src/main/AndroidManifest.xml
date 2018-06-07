@@ -17,11 +17,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".GameMenuActivity"
-            android:parentActivityName=".MainActivity"/>
-        <activity android:name=".GameSettingsActivity"
-            android:parentActivityName=".GameMenuActivity"/>
-        <activity android:name=".CanvasActivity"
-            android:parentActivityName=".GameMenuActivity"/>
+        <activity
+            android:name=".GameMenuActivity"
+            android:parentActivityName=".MainActivity" />
+        <activity
+            android:name=".GameSettingsActivity"
+            android:parentActivityName=".GameMenuActivity" />
+        <activity
+            android:name=".CanvasActivity"
+            android:parentActivityName=".GameMenuActivity" />
+        <activity
+            android:name=".Snake"
+            android:label="@string/title_activity_snake"
+            android:theme="@style/AppTheme" />
     </application>
+
 </manifest>
