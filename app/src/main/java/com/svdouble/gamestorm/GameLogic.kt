@@ -44,11 +44,11 @@ open class BaseGame(val gameId: Int, var title: String = "", var thumbResource: 
 
 class TField : GameField() {
 
-    var rows: Int = 3
-    var columns: Int = 4
+    var rows: Int = 8
+    var columns: Int = 8
     val tField: Array<Array<TPlayer>> = Array(columns) { Array(rows) { TPlayer(-1, -1) } }
 
-    var standartPatterns: ArrayList<Array<Cell2D>> = arrayListOf( // column, row
+    private var standardPatterns: ArrayList<Array<Cell2D>> = arrayListOf( // column, row
             arrayOf(Cell2D(-1, 0), Cell2D(0, 0), Cell2D(1, 0)), // right and left
             arrayOf(Cell2D(0, -1), Cell2D(0, 0), Cell2D(0, 1)), // bottom and top
             arrayOf(Cell2D(-1, -1), Cell2D(0, 0), Cell2D(1, 1)), // diagonal
@@ -57,7 +57,7 @@ class TField : GameField() {
     fun checkField(): Array<Cell2D>? {
         for (row in 0 until rows)
             for (column in 0 until columns)
-                check@ for (pattern in standartPatterns) {
+                check@ for (pattern in standardPatterns) {
                     for (cell in pattern) {
                         val point = cell + Cell2D(column, row)
                         if (tField[column][row].playerId == -1 // cell is not in game
@@ -67,7 +67,7 @@ class TField : GameField() {
                         else if (tField[point.x][point.y].playerId != tField[column][row].playerId)
                             continue@check
                     }
-                    return Array(pattern.size) {i -> pattern[i] + Cell2D(row + 1, column + 1)}
+                    return Array(pattern.size) {i -> pattern[i] + Cell2D(column + 1, row + 1)}
         }
         return null
     }
