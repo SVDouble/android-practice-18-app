@@ -14,5 +14,6 @@ class GameMenuActivity : AppCompatActivity() {
         buttonPlay.setOnClickListener { startActivity(Intent(this, CanvasActivity::class.java)) }
         buttonSettings.setOnClickListener { startActivity(Intent(this, GameSettingsActivity::class.java))}
         buttonBack.setOnClickListener { startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)) }
+        buttonPlay.setOnClickListener { startActivity(Intent(this, CanvasActivity::class.java))}
     }
 }

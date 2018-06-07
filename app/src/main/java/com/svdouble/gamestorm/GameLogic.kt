@@ -1,9 +1,8 @@
 package com.svdouble.gamestorm
 
 import android.content.Context
-import android.graphics.Color.GREEN
+import android.graphics.Color.*
 import android.util.Log
-
 
 data class Cell2D(val x: Int, val y: Int)
 open class BasePlayer(val playerId: Int)
@@ -69,9 +68,7 @@ class MyGameHandler(context: Context) : BaseGameHandler() {
                 drawEngine.forwardCall(CallDrawGrid(5, 4))
             }
             GameEvent.EventType.STEP -> {
-                Log.d(TAG, "Draw cross!")
                 drawEngine.forwardCall(CallDrawChip(Cell2D(event.pos.x, event.pos.y), 0))
-                drawEngine.invalidate()
             }
             else -> Log.d(TAG, "Unrecognised event")
         }
