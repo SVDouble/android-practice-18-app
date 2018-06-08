@@ -16,7 +16,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import com.bumptech.glide.Glide
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.activity_main_content.*
 
@@ -68,7 +68,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         /* Init header background */
-        Glide.with(this).load(R.drawable.ic_launcher_background).into(backdrop)
+        //Glide.with(this).load(R.drawable.ic_launcher_background).into(backdrop)
+        Picasso.get().load(R.drawable.sun).into(backdrop)
 
     }
 
@@ -128,7 +129,8 @@ class CardAdapter(private val mContext: Context, private val dataset: Array<Game
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.titleView.text = dataset[position].title
         holder.ratingView.text = mContext.getString(R.string.rating_pattern).format(dataset[position].rating)
-        Glide.with(mContext).load(dataset[position].thumbnail).into(holder.thumbnailView)
+        //Glide.with(mContext).load(dataset[position].thumbnail).into(holder.thumbnailView)
+        Picasso.get().load(dataset[position].thumbnail).into(holder.thumbnailView)
         holder.overflowView.setOnClickListener { showPopupMenu(holder.overflowView) }
         holder.thumbnailView.setOnClickListener { mContext.startActivity(Intent(mContext, GameMenuActivity::class.java).putExtra(INTENT_ID_KEY, dataset[position].gameId)) }
     }

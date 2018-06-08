@@ -18,4 +18,5 @@
     <string name="gi_button_back">Back</string>
     <string name="game_t_title">Tic-tac-toe</string>
     <string name="game_t_description">Description!</string>
+    <string name="recycler_item_hint">decimal</string>
 </resources>

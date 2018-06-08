@@ -1,6 +1,6 @@
 package com.svdouble.gamestorm
 
-import android.graphics.Color
+import android.graphics.Color.*
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
@@ -43,28 +43,26 @@ class GameSettingsActivity : AppCompatActivity() {
         }
     }
 
-    private fun generateFancyItems(count: Int): MutableList<CVItem>{
-        val rnd = Random()
+    private fun generateFancyItems(count: Int): MutableList<SItemText>{
         return MutableList(count){
-            CVItem(CV("john", "doe"), Color.argb(255, rnd.nextInt(256),
-                    rnd.nextInt(256), rnd.nextInt(256)))
-            }
+            SItemText(SText("prop", "hint", 0))
         }
+    }
 
 }
 
-data class CV(val name: String, val surname: String)
+data class SText(val propName: String, val propHint: String, val propDefaultValue: Int)
 
-class CVItem(private val cv: CV, private val color: Int) : Item<ViewHolder>() {
+class SItemText(private val sItem: SText) : Item<ViewHolder>() {
 
     override fun getLayout(): Int {
         return R.layout.recycler_item
     }
 
     override fun bind(viewHolder: ViewHolder, position: Int) {
-        viewHolder.itemView.name.text = cv.name
-        //viewHolder.itemView.surname.text = cv.surname
-        viewHolder.itemView.item_card.setCardBackgroundColor(color)
+        viewHolder.itemView.prop_name.text = sItem.propName
+        viewHolder.itemView.prop_field.hint = sItem.propHint
+        viewHolder.itemView.prop_field.setText(sItem.propDefaultValue.toString())
     }
 
     override fun getSpanSize(spanCount: Int, position: Int) = spanCount / SPAN_COUNT
