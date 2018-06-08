@@ -120,7 +120,7 @@ class TGameHandler(private val game: TGame, context: Context) : BaseGameHandler(
 class TGame private constructor(private val context: Context)
     : BaseGame(GAME_TICTACTOE_ID, 5.0, R.string.game_t_title, R.string.game_t_description, R.drawable.ic_launcher_foreground) {
     private var players = arrayOf(TPlayer(1, 0), TPlayer(2, 1)) // Hardcore mode: same chips
-    private var handler = TGameHandler(this, context)
+    var handler = TGameHandler(this, context)
 
     override fun startGame() {
         handler.dispatchEvent(GameEvent(GameEvent.EventType.START))
