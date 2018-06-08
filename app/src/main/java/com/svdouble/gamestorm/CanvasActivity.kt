@@ -12,10 +12,21 @@ class CanvasActivity : AppCompatActivity() {
 
         when(intent.getIntExtra(INTENT_ID_KEY, -1)) {
             GAME_TICTACTOE_ID -> {
-                TGame.getInstance(this).startGame()
+                if (TGame.getInstance(this).getState() == BaseGameHandler.GameState.INIT)
+                    TGame.getInstance(this).startGame()
                 setContentView(TGame.getInstance(this).getDrawEngine())
             }
             else -> setContentView(R.layout.activity_base_canvas)
+        }
+    }
+
+    override fun onStop() {
+        super.onStop()
+
+        when(intent.getIntExtra(INTENT_ID_KEY, -1)) {
+            GAME_TICTACTOE_ID -> {
+                TGame.getInstance(this).resetGame()
+            }
         }
     }
 }

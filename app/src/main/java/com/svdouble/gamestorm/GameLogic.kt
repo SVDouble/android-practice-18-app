@@ -33,6 +33,7 @@ abstract class BaseGameHandler {
 
 abstract class BaseGame(val gameId: Int, var rating: Double = 0.0, var titleRId: Int = -1, var descriptionRId: Int = -1, var thumbResourceRId: Int = -1) {
     abstract fun startGame()
+    abstract fun resetGame()
     abstract fun generateGameCard(): GameCard
 }
 
@@ -119,16 +120,21 @@ class TGameHandler(private val game: TGame, context: Context) : BaseGameHandler(
 class TGame private constructor(private val context: Context)
     : BaseGame(GAME_TICTACTOE_ID, 5.0, R.string.game_t_title, R.string.game_t_description, R.drawable.ic_launcher_foreground) {
     private var players = arrayOf(TPlayer(1, 0), TPlayer(2, 1)) // Hardcore mode: same chips
-    private val handler = TGameHandler(this, context)
+    private var handler = TGameHandler(this, context)
 
     override fun startGame() {
         handler.dispatchEvent(GameEvent(GameEvent.EventType.START))
+    }
+
+    override fun resetGame() {
+        handler = TGameHandler(this, context)
     }
 
     override fun generateGameCard() = GameCard(gameId, context.getString(titleRId), rating, thumbResourceRId)
 
     fun getPlayers() = players
     fun getDrawEngine() = handler.drawEngine
+    fun getState() = handler.state
 
     companion object : SingletonHolder<TGame, Context>(::TGame)
 }
