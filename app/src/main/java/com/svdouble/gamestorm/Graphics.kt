@@ -37,7 +37,7 @@ class CellularDrawEngine2D(context: Context) : View(context) {
             val y = (event.y / squareSide).toInt()
 
             if (x < columns && y < rows)
-                gameHandler.dispatchEvent(GameEvent(GameEvent.EventType.STEP, Cell2D(x, y)))
+                gameHandler.dispatchEvent(GameEvent(GameEvent.Type.STEP, Cell2D(x, y)))
             this.invalidate()
         }
         return super.onTouchEvent(event)
@@ -85,8 +85,10 @@ class CellularDrawEngine2D(context: Context) : View(context) {
                 val yyy = (call.point.y * 1f * squareSide - 1)
                 val arg11: Float = xxx - (xxx % squareSide) + squareSide / 2
                 val arg22: Float = yyy + squareSide / 2 - (yyy % squareSide)
+                mPaint.isAntiAlias = true
                 mPaint.color = call.color
-                mPaint.strokeWidth = 7F
+                mPaint.style = Paint.Style.STROKE
+                mPaint.strokeWidth = 15F
                 canvas.drawLine(arg11 - (squareSide / 2 - 5f), arg22 - (squareSide / 2 - 5f), arg11 + (squareSide / 2 - 5f), arg22 + (squareSide / 2 - 5f), mPaint)
                 canvas.drawLine(arg11 + (squareSide / 2 - 5f), arg22 - (squareSide / 2 - 5f), arg11 - (squareSide / 2 - 5f), arg22 + (squareSide / 2 - 5f), mPaint)
             }
@@ -100,7 +102,7 @@ class CellularDrawEngine2D(context: Context) : View(context) {
                 mPaint.isAntiAlias = true
                 mPaint.color = call.color
                 mPaint.style = Paint.Style.STROKE
-                mPaint.strokeWidth = 6F
+                mPaint.strokeWidth = 15F
                 canvas.drawCircle(arg11, arg22, squareSide / 2 - 4f, mPaint)
 
             }
@@ -109,7 +111,10 @@ class CellularDrawEngine2D(context: Context) : View(context) {
     }
 
     private fun fillGridCells(call: CallDrawGridCells, canvas: Canvas) {
+        mPaint.isAntiAlias = true
         mPaint.color = call.color
+        mPaint.style = Paint.Style.STROKE
+        mPaint.strokeWidth = 15F
         call.points.forEach {
             val xxx = ((it.x - 1f) * squareSide)
             val yyy = ((it.y - 1f) * squareSide)
