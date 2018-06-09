@@ -1,14 +1,12 @@
 package com.svdouble.gamestorm
 
-import android.graphics.Color.*
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
 import com.xwray.groupie.*
 import kotlinx.android.synthetic.main.activity_game_settings.*
 import kotlinx.android.synthetic.main.recycler_header.view.*
 import kotlinx.android.synthetic.main.recycler_item.view.*
-import java.util.*
 
 const val SPAN_COUNT = 1 // Number of rows
 
@@ -45,7 +43,7 @@ class GameSettingsActivity : AppCompatActivity() {
 
     private fun generateFancyItems(count: Int): MutableList<SItemText>{
         return MutableList(count){
-            SItemText(SText("prop", "hint", 0))
+            SItemText(SText("propertyData", "hint", 0))
         }
     }
 

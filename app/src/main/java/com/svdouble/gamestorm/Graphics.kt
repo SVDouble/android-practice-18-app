@@ -124,7 +124,6 @@ class CellularDrawEngine2D(context: Context) : View(context) {
     }
 
     private inner class DrawStorage {
-
         val drawCalls: ArrayList<BaseCall> = arrayListOf()
         fun drawFromStorage(canvas: Canvas) {
             for (call in drawCalls)

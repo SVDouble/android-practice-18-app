@@ -25,7 +25,8 @@ class CanvasActivity : AppCompatActivity() {
 
         when(intent.getIntExtra(INTENT_ID_KEY, -1)) {
             GAME_TICTACTOE_ID -> {
-                TGame.getInstance(this).resetGame()
+                // detach drawEngine
+                setContentView(R.layout.activity_base_canvas)
             }
         }
     }
