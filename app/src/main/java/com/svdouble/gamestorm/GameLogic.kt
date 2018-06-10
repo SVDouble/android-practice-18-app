@@ -50,19 +50,16 @@ class PropertyBounds<T : Any>(private val bounds: Array<out (T) -> Boolean> = ar
 
     fun checkProperty(value: T): Boolean {
         var testResult = true
-        if (value == null)
-            testResult = false
-        else
-            bounds.forEach { if (!it(value)) testResult = false }
+        bounds.forEach { if (!it(value)) testResult = false }
         return testResult
     }
 }
 
 @Suppress("UNCHECKED_CAST")
-class ResourceManager(val game: BaseGame) {
+class ResourceManager {
     val sections: MutableMap<String, MutableMap<String, RPair>> = mutableMapOf()
     private var containers = mutableListOf<PropertyContainer>()
-    var propertiesLocked = false
+    private var propertiesLocked = false
 
     fun <T : Any> registerProperty(pData: PropertyData<T>, pBounds: PropertyBounds<T>) {
         val section = sections[pData.section]
@@ -81,7 +78,7 @@ class ResourceManager(val game: BaseGame) {
 
     fun <T : Any> setProperty(pData: PropertyData<T>): Boolean {
         if (!propertiesLocked) {
-            val pBounds = sections.get(pData.section)?.get(pData.name)!!.second
+            val pBounds = sections[pData.section]?.get(pData.name)!!.second
             if (!pBounds.checkProperty(pData.currentValue))
                 throw IllegalArgumentException("Illegal default value!")
             sections[pData.section]!![pData.name]!!.first = pData.currentValue
@@ -137,7 +134,7 @@ fun <T : Any> bindResource(propContainer: PropertyContainer,
     }
 }
 
-class Games private constructor(private val context: Context) {
+class Games private constructor(context: Context) {
     val games: Array<BaseGame> = arrayOf(TGame(context))
 
     companion object : SingletonHolder<Games, Context>(::Games)

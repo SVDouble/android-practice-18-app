@@ -92,8 +92,8 @@ class TGameHandler(private val game: TGame, context: Context) : BaseGameHandler(
 class TGame(private val context: Context)
     : BaseGame(GAME_TICTACTOE_ID, 5.0, R.string.game_t_title, R.string.game_t_description, R.drawable.ic_launcher_foreground),
         PropertyContainer {
-    val manager = ResourceManager(this) // should be init. before all bindings
-    val hardcoreMode by bindResource(this, false, "hardcore mode", "Extra")
+    val manager = ResourceManager() // should be init. before all bindings
+    private val hardcoreMode by bindResource(this, false, "hardcore mode", "Extra")
     lateinit var players: Array<TPlayer>
     private val handler = TGameHandler(this, context)  // should be init. after manager
 
