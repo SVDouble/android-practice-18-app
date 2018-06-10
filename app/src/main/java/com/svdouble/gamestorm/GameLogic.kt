@@ -38,21 +38,31 @@ abstract class BaseGame(val gameId: Int, var rating: Double = 0.0, var titleRId:
 /* Settings */
 interface PropertyContainer {
     fun getResourceManager(): ResourceManager
+    fun onPropertiesLock()
 }
+
+data class ResourcePair<A : Any, B : Any>(var first: A, var second: B)
+typealias RPair = ResourcePair<Any, PropertyBounds<Any>>
 
 data class PropertyData<T : Any>(var currentValue: T, val name: String, val section: String)
 
 class PropertyBounds<T : Any>(private val bounds: Array<out (T) -> Boolean> = arrayOf()) {
+
     fun checkProperty(value: T): Boolean {
         var testResult = true
-        bounds.forEach { if (!it(value)) testResult = false }
+        if (value == null)
+            testResult = false
+        else
+            bounds.forEach { if (!it(value)) testResult = false }
         return testResult
     }
 }
 
 @Suppress("UNCHECKED_CAST")
-class ResourceManager {
-    val sections: MutableMap<String, MutableMap<String, Pair<*, PropertyBounds<*>>>> = mutableMapOf()
+class ResourceManager(val game: BaseGame) {
+    val sections: MutableMap<String, MutableMap<String, RPair>> = mutableMapOf()
+    private var containers = mutableListOf<PropertyContainer>()
+    var propertiesLocked = false
 
     fun <T : Any> registerProperty(pData: PropertyData<T>, pBounds: PropertyBounds<T>) {
         val section = sections[pData.section]
@@ -61,13 +71,33 @@ class ResourceManager {
         if (!pBounds.checkProperty(pData.currentValue))
             throw IllegalArgumentException("Illegal default value!")
         if (section != null)
-            section[pData.name] = Pair(pData.currentValue, pBounds)
+            section[pData.name] = ResourcePair(pData.currentValue, pBounds) as RPair
         else
-            sections[pData.section] = mutableMapOf<String, Pair<*, PropertyBounds<*>>>(pData.name to Pair(pData.currentValue, pBounds))
+            sections[pData.section] = mutableMapOf(pData.name to ResourcePair(pData.currentValue, pBounds) as RPair)
     }
 
     fun <T : Any> getProperty(pData: PropertyData<T>): T =
-            sections.get(pData.section)?.get(pData.name)!!.first as T
+            sections[pData.section]?.get(pData.name)!!.first as T
+
+    fun <T : Any> setProperty(pData: PropertyData<T>): Boolean {
+        if (!propertiesLocked) {
+            val pBounds = sections.get(pData.section)?.get(pData.name)!!.second
+            if (!pBounds.checkProperty(pData.currentValue))
+                throw IllegalArgumentException("Illegal default value!")
+            sections[pData.section]!![pData.name]!!.first = pData.currentValue
+            return true
+        }
+        return false
+    }
+
+    fun registerContainer(container: PropertyContainer) {
+        containers.add(container)
+    }
+
+    fun lockProperties() {
+        propertiesLocked = true
+        containers.forEach { it.onPropertiesLock() }
+    }
 }
 
 class PropertyLoader<T : Any>(private val manager: ResourceManager,
@@ -97,12 +127,15 @@ fun <T : Any> bindResource(propContainer: PropertyContainer,
                            name: String,
                            section: String,
                            vararg checkBounds: (T) -> Boolean)
-        : PropertyLoader<T> =
-        when (defaultValue::class) {
-            Int::class, Double::class, String::class ->
-                PropertyLoader(propContainer.getResourceManager(), PropertyData(defaultValue, name, section), PropertyBounds(checkBounds))
-            else -> throw IllegalArgumentException("Type ${defaultValue::class.java} isn't supported!")
+        : PropertyLoader<T> {
+    when (defaultValue::class) {
+        Boolean::class, Int::class, Double::class, String::class -> {
+            propContainer.getResourceManager().registerContainer(propContainer)
+            return PropertyLoader(propContainer.getResourceManager(), PropertyData(defaultValue, name, section), PropertyBounds(checkBounds))
         }
+        else -> throw IllegalArgumentException("Type ${defaultValue::class.java} isn't supported!")
+    }
+}
 
 class Games private constructor(private val context: Context) {
     val games: Array<BaseGame> = arrayOf(TGame(context))

@@ -10,11 +10,14 @@ const val GAME_TICTACTOE_ID = 1
 class TField(private val manager: ResourceManager) : PropertyContainer {
 
     override fun getResourceManager() = manager
+    override fun onPropertiesLock() {
+        tField = Array(columns) { Array(rows) { TPlayer(-1, -1) } }
+    }
 
-    val rows by bindResource(this, 3, "rows", "field", { it in 2..5 })
-    val columns by bindResource(this, 3, "columns", "field")
+    val rows by bindResource(this, 3, "rows", "Field", { it in 2..10 })
+    val columns by bindResource(this, 3, "columns", "Field", { it in 2..15 })
 
-    val tField: Array<Array<TPlayer>> = Array(columns) { Array(rows) { TPlayer(-1, -1) } }
+    lateinit var tField: Array<Array<TPlayer>>
 
     private var standardPatterns: ArrayList<Array<Cell2D>> = arrayListOf( // column, row
             arrayOf(Cell2D(-1, 0), Cell2D(0, 0), Cell2D(1, 0)), // right and left
@@ -87,12 +90,15 @@ class TGameHandler(private val game: TGame, context: Context) : BaseGameHandler(
 
 
 class TGame(private val context: Context)
-    : BaseGame(GAME_TICTACTOE_ID, 5.0, R.string.game_t_title, R.string.game_t_description, R.drawable.ic_launcher_foreground) {
-    val manager = ResourceManager()
-    var players = arrayOf(TPlayer(1, 0), TPlayer(2, 1)) // Hardcore mode: same chips
-    private val handler by lazy { TGameHandler(this, context) }
+    : BaseGame(GAME_TICTACTOE_ID, 5.0, R.string.game_t_title, R.string.game_t_description, R.drawable.ic_launcher_foreground),
+        PropertyContainer {
+    val manager = ResourceManager(this) // should be init. before all bindings
+    val hardcoreMode by bindResource(this, false, "hardcore mode", "Extra")
+    lateinit var players: Array<TPlayer>
+    private val handler = TGameHandler(this, context)  // should be init. after manager
 
     override fun startGame() {
+        manager.lockProperties()
         handler.dispatchEvent(GameEvent(GameEvent.Type.START))
     }
 
@@ -100,4 +106,10 @@ class TGame(private val context: Context)
 
     fun getDrawEngine() = handler.drawEngine
     fun getState() = handler.state
+
+    /* Property container */
+    override fun getResourceManager() = manager
+    override fun onPropertiesLock() {
+        players = arrayOf(TPlayer(1, if (hardcoreMode) 1 else 0), TPlayer(2, 1)) // Hardcore mode: same chips
+    }
 }

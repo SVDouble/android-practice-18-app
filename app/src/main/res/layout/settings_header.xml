@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/header_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -15,6 +12,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingBottom="6dp"
         android:layout_gravity="start">
 
         <ImageView
@@ -31,7 +29,7 @@
             android:layout_gravity="center_vertical"
             android:layout_toEndOf="@id/header_icon"
             android:layout_centerVertical="true"
-            android:textSize="24sp"/>
+            android:textSize="36sp"/>
 
     </RelativeLayout>
 

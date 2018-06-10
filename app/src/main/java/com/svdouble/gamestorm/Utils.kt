@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 
+/* Shared preferences */
 class Prefs (context: Context) {
     private val PREFS_FILENAME = "com.svdouble.gamestorm.prefs"
     private val STRING_TO_SAVE = "string_to_save"
