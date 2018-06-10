@@ -23,7 +23,7 @@ class Piece( x1 : Float, y1 : Float )
 
 class Snake
 {
-    var pieceSideSize : Float = 25f
+    var pieceSideSize : Float = 30f
     var body : Vector< Piece > = Vector()
 
     var deltaX : Float = 0f
@@ -36,22 +36,22 @@ class Snake
     {
         var newX = body[0].x + deltaX
         var newY = body[0].y + deltaY
-        if( newX * pieceSideSize >= fieldWidth )
+        if( newX * pieceSideSize >= fieldWidth - (fieldWidth % pieceSideSize))
             newX = 0f
         if( newX < 0f )
-            newX = ( fieldWidth / pieceSideSize )
+            newX = ( (fieldWidth - (fieldWidth % pieceSideSize))/ pieceSideSize ) -1f
 
-        if( newY * pieceSideSize >= fieldHeight )
+        if( newY * pieceSideSize >= fieldHeight - (fieldHeight % pieceSideSize))
             newY = 0f
         if( newY < 0f )
-            newY = ( fieldHeight / pieceSideSize )
+            newY = ( (fieldHeight - (fieldHeight % pieceSideSize))/ pieceSideSize ) -1f
 
         body.insertElementAt( Piece( newX, newY ), 0 )
     }
 
     fun eat()
     {
-        this.makeHead()
+        makeHead()
     }
 
     fun start( w : Float, h : Float )
@@ -63,7 +63,7 @@ class Snake
 
     fun move()
     {
-        this.makeHead()
+        makeHead()
         body.removeElement( body.lastElement() )
     }
 }
@@ -118,8 +118,9 @@ class Draw2D(context: Context) : View(context) {
         mPaint.color = YELLOW
         mPaint.style = Paint.Style.FILL
         canvas.drawPaint(mPaint)
-
-
+        mPaint.color = BLUE
+        canvas.drawLine(0f,snake.fieldHeight - (snake.fieldHeight % snake.pieceSideSize), snake.fieldWidth - (snake.fieldWidth % snake.pieceSideSize), snake.fieldHeight - (snake.fieldHeight % snake.pieceSideSize), mPaint)
+        canvas.drawLine(snake.fieldWidth - (snake.fieldWidth % snake.pieceSideSize),0f, snake.fieldWidth - (snake.fieldWidth % snake.pieceSideSize), snake.fieldHeight - (snake.fieldHeight % snake.pieceSideSize), mPaint)
         mPaint.color = RED
         for( el in snake.body ) {
             canvas.drawRect( el.x * snake.pieceSideSize, el.y * snake.pieceSideSize,
@@ -132,7 +133,7 @@ class Draw2D(context: Context) : View(context) {
     {
         if(k==1f) {
             snake.eat()
-            k = 0f
+            k=0f
         }
         else
             snake.move()
@@ -156,7 +157,7 @@ open class SnakeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         val draw2D = Draw2D(this)
         setContentView(draw2D)
-        Timer().schedule( TimerHandle(draw2D), 1000, 150 )
+        Timer().schedule( TimerHandle(draw2D), 1000, 200 )
 
     }
 }
