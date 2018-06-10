@@ -27,9 +27,8 @@
             android:name=".CanvasActivity"
             android:parentActivityName=".GameMenuActivity" />
         <activity
-            android:name=".Snake"
-            android:label="@string/title_activity_snake"
-            android:theme="@style/AppTheme" />
+            android:name=".SnakeActivity"
+            android:parentActivityName=".GameMenuActivity" />
     </application>
 
 </manifest>
