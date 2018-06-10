@@ -11,9 +11,9 @@ class GameMenuActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game_menu)
 
-        buttonPlay.setOnClickListener { startActivity(Intent(this, CanvasActivity::class.java)) }
+        buttonPlay.setOnClickListener { startActivity(Intent(this, Snake::class.java)) }
         buttonSettings.setOnClickListener { startActivity(Intent(this, GameSettingsActivity::class.java))}
         buttonBack.setOnClickListener { startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)) }
-        buttonPlay.setOnClickListener { startActivity(Intent(this, CanvasActivity::class.java))}
+        //buttonPlay.setOnClickListener { startActivity(Intent(this, CanvasActivity::class.java))}
     }
 }

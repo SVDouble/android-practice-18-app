@@ -61,7 +61,7 @@ class CellularDrawEngine2D(context: Context) : View(context) {
         if (width > (height * bottomMargin))
             squareSide = (height * bottomMargin / rows).toInt()
 
-        this.squareSide= squareSide
+        this.squareSide = squareSide
         rows = call.rows
         columns = call.rows
 

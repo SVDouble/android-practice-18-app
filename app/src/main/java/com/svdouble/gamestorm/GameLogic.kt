@@ -65,12 +65,12 @@ class MyGameHandler(context: Context) : BaseGameHandler() {
             GameEvent.EventType.START -> {
                 state = GameState.RESUMED
                 drawEngine.forwardCall(CallDrawBg(GREEN))
-                drawEngine.forwardCall(CallDrawGrid(5, 4))
+                drawEngine.forwardCall(CallDrawGrid(4, 5))
             }
             GameEvent.EventType.STEP -> {
                 drawEngine.forwardCall(CallDrawChip(Cell2D(event.pos.x, event.pos.y), 0))
             }
-            else -> Log.d(TAG, "Unrecognised event")
+           // else -> Log.d(getTAG(), "Unrecognised event")
         }
     }
 }
