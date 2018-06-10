@@ -12,9 +12,10 @@ class CanvasActivity : AppCompatActivity() {
 
         when(intent.getIntExtra(INTENT_ID_KEY, -1)) {
             GAME_TICTACTOE_ID -> {
-                if (TGame.getInstance(this).getState() == BaseGameHandler.GameState.INIT)
-                    TGame.getInstance(this).startGame()
-                setContentView(TGame.getInstance(this).getDrawEngine())
+                val tGame = Games.getInstance(this).games[0] as TGame
+                if (tGame.getState() == BaseGameHandler.State.INIT)
+                    tGame.startGame()
+                setContentView(tGame.getDrawEngine())
             }
             else -> setContentView(R.layout.activity_base_canvas)
         }
@@ -25,7 +26,8 @@ class CanvasActivity : AppCompatActivity() {
 
         when(intent.getIntExtra(INTENT_ID_KEY, -1)) {
             GAME_TICTACTOE_ID -> {
-                TGame.getInstance(this).resetGame()
+                // detach drawEngine
+                setContentView(R.layout.activity_base_canvas)
             }
         }
     }

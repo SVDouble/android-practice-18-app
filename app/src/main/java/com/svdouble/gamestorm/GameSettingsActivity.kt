@@ -1,25 +1,108 @@
 package com.svdouble.gamestorm
 
-import android.graphics.Color.*
-import android.support.v7.app.AppCompatActivity
+import android.graphics.Color.GREEN
+import android.graphics.Color.RED
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
+import android.text.Editable
+import android.text.InputType
+import android.text.TextWatcher
 import com.xwray.groupie.*
 import kotlinx.android.synthetic.main.activity_game_settings.*
-import kotlinx.android.synthetic.main.recycler_header.view.*
-import kotlinx.android.synthetic.main.recycler_item.view.*
-import java.util.*
+import kotlinx.android.synthetic.main.settings_header.view.*
+import kotlinx.android.synthetic.main.settings_item_bool.view.*
+import kotlinx.android.synthetic.main.settings_item_string.view.*
 
-const val SPAN_COUNT = 1 // Number of rows
+const val SPAN_COUNT = 1 // Number of columns
+
+@Suppress("UNCHECKED_CAST")
+class PropertyWrapper<T : Any>(val manager: ResourceManager, var pData: PropertyData<T>, val pBounds: PropertyBounds<T>) : Item<ViewHolder>() {
+
+    override fun getLayout() =
+            when (pData.currentValue::class) {
+                Int::class, Double::class, String::class -> R.layout.settings_item_string
+                Boolean::class -> R.layout.settings_item_bool
+                else -> throw IllegalArgumentException("Type ${pData.currentValue::class.java} isn't supported!")
+            }
+
+    override fun bind(viewHolder: ViewHolder, position: Int) {
+        val view = viewHolder.itemView
+        when (pData.currentValue::class) {
+            Int::class -> {
+                view.prop_name_string.text =
+                        viewHolder.itemView.resources.getString(R.string.settings_prop_name_pattern).format(pData.name)
+                view.prop_name_string.setTextColor(GREEN)
+                view.prop_field_string.setText(pData.currentValue.toString())
+                view.prop_field_string.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
+                view.prop_field_string.addTextChangedListener(object : TextWatcher {
+                    override fun afterTextChanged(p0: Editable?) {}
+
+                    override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+                    override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                        val value = view.prop_field_string.text?.toString()
+                        if (!value.isNullOrEmpty() && !value!!.isBlank()) {
+                            val newValue = value.toInt() as? T
+                            if (newValue != null && pBounds.checkProperty(newValue)) {
+                                manager.setProperty(pData.apply { currentValue = newValue })
+                                view.prop_name_string.setTextColor(GREEN)
+                            }
+                            else
+                                view.prop_name_string.setTextColor(RED)
+                        }
+                        else
+                            view.prop_name_string.setTextColor(RED)
+                    }
+                })
+            }
+            Double::class -> {
+                view.prop_name_string.text =
+                        viewHolder.itemView.resources.getString(R.string.settings_prop_name_pattern).format(pData.name)
+                view.prop_name_string.setTextColor(GREEN)
+                view.prop_field_string.setText(pData.currentValue.toString())
+                view.prop_field_string.inputType = InputType.TYPE_CLASS_NUMBER
+                view.prop_field_string.addTextChangedListener(object : TextWatcher {
+                    override fun afterTextChanged(p0: Editable?) {}
+
+                    override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+                    override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                        val value = view.prop_field_string.text?.toString()
+                        if (!value.isNullOrEmpty() && !value!!.isBlank()) {
+                            val newValue = value.toDouble() as? T
+                            if (newValue != null && pBounds.checkProperty(newValue)) {
+                                manager.setProperty(pData.apply { currentValue = newValue })
+                                view.prop_name_string.setTextColor(GREEN)
+                            }
+                            else
+                                view.prop_name_string.setTextColor(RED)
+                        }
+                        else
+                            view.prop_name_string.setTextColor(RED)
+                    }
+                })
+            }
+            Boolean::class -> {
+                view.prop_name_bool.text =
+                        viewHolder.itemView.resources.getString(R.string.settings_prop_name_pattern).format(pData.name)
+                view.prop_name_bool.setTextColor(GREEN)
+                view.prop_field_bool.isChecked = pData.currentValue as Boolean
+                view.prop_field_bool.setOnCheckedChangeListener { _, state ->
+                    manager.setProperty(pData.apply { currentValue = state as T })
+                }
+            }
+        }
+    }
+
+    override fun getSpanSize(spanCount: Int, position: Int) = spanCount / SPAN_COUNT
+}
 
 class GameSettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game_settings)
-
-        val boringFancyItems = generateFancyItems(6)
-        val excitingFancyItems = generateFancyItems(12)
 
         val groupAdapter = GroupAdapter<ViewHolder>().apply {
             spanCount = SPAN_COUNT
@@ -32,41 +115,17 @@ class GameSettingsActivity : AppCompatActivity() {
             adapter = groupAdapter
         }
 
-        ExpandableGroup(ExpandableHeaderItem("Boring Group"), false).apply {
-            add(Section(boringFancyItems))
-            groupAdapter.add(this)
-        }
-
-        ExpandableGroup(ExpandableHeaderItem("Exciting Group"), false).apply {
-            add(Section(excitingFancyItems))
-            groupAdapter.add(this)
-        }
-    }
-
-    private fun generateFancyItems(count: Int): MutableList<SItemText>{
-        return MutableList(count){
-            SItemText(SText("prop", "hint", 0))
+        when (intent.getIntExtra(INTENT_ID_KEY, -1)) {
+            GAME_TICTACTOE_ID -> {
+                val manager = (Games.getInstance(this).games[0] as TGame).manager
+                for ((title, section) in manager.sections)
+                    ExpandableGroup(ExpandableHeaderItem(title), false).apply {
+                        add(Section(section.map { (name, res) -> PropertyWrapper(manager, PropertyData(res.first, name, title), res.second) }))
+                        groupAdapter.add(this)
+                    }
+            }
         }
     }
-
-}
-
-data class SText(val propName: String, val propHint: String, val propDefaultValue: Int)
-
-class SItemText(private val sItem: SText) : Item<ViewHolder>() {
-
-    override fun getLayout(): Int {
-        return R.layout.recycler_item
-    }
-
-    override fun bind(viewHolder: ViewHolder, position: Int) {
-        viewHolder.itemView.prop_name.text = sItem.propName
-        viewHolder.itemView.prop_field.hint = sItem.propHint
-        viewHolder.itemView.prop_field.setText(sItem.propDefaultValue.toString())
-    }
-
-    override fun getSpanSize(spanCount: Int, position: Int) = spanCount / SPAN_COUNT
-
 }
 
 class ExpandableHeaderItem(val title: String) : Item<ViewHolder>(), ExpandableItem {
@@ -83,18 +142,15 @@ class ExpandableHeaderItem(val title: String) : Item<ViewHolder>(), ExpandableIt
         }
     }
 
-    override fun getLayout() = R.layout.recycler_header
+    override fun getLayout() = R.layout.settings_header
 
     override fun setExpandableGroup(onToggleListener: ExpandableGroup) {
         expandableGroup = onToggleListener
     }
 
     private fun getIcon() =
-        if (expandableGroup.isExpanded)
-            android.R.drawable.ic_delete
-        else
-            android.R.drawable.ic_input_add
-    }
-
-
-
+            if (expandableGroup.isExpanded)
+                android.R.drawable.ic_delete
+            else
+                android.R.drawable.ic_input_add
+}

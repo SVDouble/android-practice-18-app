@@ -48,13 +48,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         /* Initialize dataset, Manager and Adapter */
-        val dataset = arrayOf(
-                TGame.getInstance(this).generateGameCard(),
-                GameCard(0,"world", 5.0, R.drawable.ic_launcher_foreground),
-                GameCard(0,"wow!", 1.0, R.drawable.ic_launcher_background),
-                GameCard(0,"really!", 1.0, R.drawable.ic_launcher_background),
-                GameCard(0,"mmm!", 1.0, R.drawable.ic_launcher_background),
-                GameCard(0,"amazing!", 1.0, R.drawable.ic_launcher_background))
+        val dataset = Array(Games.getInstance(this).games.size)
+        { i -> Games.getInstance(this).games[i].generateGameCard() }
         viewManager = GridLayoutManager(this, 2)
         viewAdapter = CardAdapter(this, dataset)
         viewAdapter.notifyDataSetChanged()
@@ -140,7 +135,7 @@ class CardAdapter(private val mContext: Context, private val dataset: Array<Game
         val inflater = popup.menuInflater
         inflater.inflate(R.menu.menu_card, popup.menu)
         popup.setOnMenuItemClickListener {
-            when(it.itemId) {
+            when (it.itemId) {
                 R.id.action_add_favourite -> Log.d(DEBUG_LOG_KEY, "Wow!")
                 R.id.action_rate -> Log.d(DEBUG_LOG_KEY, "Oops!")
                 else -> return@setOnMenuItemClickListener false
