@@ -8,10 +8,11 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.view.MotionEvent
+import java.lang.Math.abs
 import java.util.*
 
 
-const val pieceSideSize : Float = 50f
+const val pieceSideSize : Float = 30f
 
 
 class Piece( x1 : Float, y1 : Float )
@@ -72,25 +73,39 @@ class Draw2D(context: Context) : View(context) {
     private val mPaint = Paint()
     private var xPath: Float = 0.0f
     private var yPath: Float = 0.0f
-
-
-
-    private var k: Float = 0f
+    private var e1: Float = 0.0f
+    private var e2: Float = 0.0f
+    var widthPoints : Int = 0
+    var heightPoints : Int = 0
 
     var snake : Snake = Snake()
 
-    var apple : Piece = Piece(0f,0f)
+    private var apple : Piece = Piece(0f,0f)
 
-    fun makeNewApple(w: Int, h: Int)
+    fun checkBody( x : Float, y : Float ) : Boolean
     {
-        apple = Piece( Math.abs(Random().nextInt() % (( w.toFloat() -  (w.toFloat() % pieceSideSize))/ pieceSideSize ) ),
-                Math.abs(Random().nextInt() % (( h.toFloat() - (h.toFloat() % pieceSideSize)) / pieceSideSize )  ) )
+        for( el in snake.body )
+            if( el.x == x && el.y == y )
+                return  true
+        return false
+    }
+
+    fun makeNewApple( )
+    {
+
+        do {
+            e1 = abs(Random().nextInt() % widthPoints).toFloat() //abs(Random().nextInt() % (( h.toFloat() - (h.toFloat() % pieceSideSize)) / pieceSideSize ) )
+            e2 = abs(Random().nextInt() % heightPoints).toFloat() //abs(Random().nextInt() % (( w.toFloat() - (w.toFloat() % pieceSideSize)) / pieceSideSize ) )
+        } while( checkBody( e1, e2 ) )
+        this.apple = Piece(e1,e2)
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
 
+        widthPoints = w / pieceSideSize.toInt()
+        heightPoints = h / pieceSideSize.toInt()
         snake.start(w.toFloat(),h.toFloat())
-        makeNewApple(w,h)
+        makeNewApple()
         super.onSizeChanged(w, h, oldw, oldh)
 
     }
@@ -102,6 +117,7 @@ class Draw2D(context: Context) : View(context) {
             this.xPath = event.x
             this.yPath = event.y
 
+
             if(this.xPath > 3f/4f*w && this.yPath < 3f/4f*h && this.yPath > h*1f/4f && snake.deltaX != -1f) {
                 snake.deltaX = 1f;snake.deltaY = 0f }
             if(this.yPath > 3f/4f*h && this.xPath > w*1f/4f && this.xPath < w*3f/4f && snake.deltaY != -1f){
@@ -110,8 +126,6 @@ class Draw2D(context: Context) : View(context) {
                 snake.deltaX = -1f;snake.deltaY = 0f}
             if(this.yPath < 1f/4f*h && this.xPath < w*3f/4f && this.xPath > w*1f/4f && snake.deltaY != 1f){
                 snake.deltaY = -1f;snake.deltaX = 0f}
-            if(this.xPath < 3f/4f*w && this.yPath < 3f/4f*h && this.yPath > h*1f/4f && this.xPath > 1f/4f*w)
-                k=1f
             this.invalidate()
         }
         return super.onTouchEvent(event)
@@ -127,8 +141,15 @@ class Draw2D(context: Context) : View(context) {
         canvas.drawPaint(mPaint)
         mPaint.color = BLUE
 
+
+        //if(apple.x == )
         canvas.drawLine(0f,snake.fieldHeight - (snake.fieldHeight % pieceSideSize), snake.fieldWidth - (snake.fieldWidth % pieceSideSize), snake.fieldHeight - (snake.fieldHeight % pieceSideSize), mPaint)
         canvas.drawLine(snake.fieldWidth - (snake.fieldWidth % pieceSideSize),0f, snake.fieldWidth - (snake.fieldWidth % pieceSideSize), snake.fieldHeight - (snake.fieldHeight % pieceSideSize), mPaint)
+
+        mPaint.color = BLUE
+        canvas.drawCircle( (apple.x * pieceSideSize + (apple.x + 1 )*pieceSideSize)/2, (apple.y * pieceSideSize + (apple.y + 1 )*pieceSideSize)/2,
+                pieceSideSize/2,  mPaint )
+        canvas.drawText("${this.e1}    ${this.e2}", 24f, 500f, mPaint)
 
         mPaint.color = RED
         for( el in snake.body ) {
@@ -136,16 +157,13 @@ class Draw2D(context: Context) : View(context) {
                     (el.x + 1 )*pieceSideSize, (el.y + 1 )*pieceSideSize, mPaint )
         }
 
-        canvas.drawRect( apple.x * pieceSideSize, apple.y * pieceSideSize,
-                (apple.x + 1 )*pieceSideSize, (apple.y + 1 )*pieceSideSize, mPaint )
-
     }
 
     fun onTimer()
     {
-        if(k==1f) {
+        if( apple.y == snake.body[0].y && apple.x == snake.body[0].x ) {
             snake.eat()
-            k=0f
+            makeNewApple()
         }
         else
             snake.move()
@@ -165,7 +183,9 @@ open class SnakeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val draw2D = Draw2D(this)
+
         setContentView(draw2D)
+
         Timer().schedule( TimerHandle(draw2D), 1000, 200 )
 
     }
