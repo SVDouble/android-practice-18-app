@@ -11,7 +11,7 @@ class TField(private val manager: ResourceManager) : PropertyContainer {
 
     override fun getResourceManager() = manager
     override fun onPropertiesLock() {
-        tField = Array(columns) { Array(rows) { TPlayer(-1, -1) } }
+        tField = Array(columns) { Array(rows) { TPlayer(-1, -1, -1) } }
     }
 
     val rows by bindResource(this, 3, "rows", "Field", { it in 2..10 })
@@ -44,9 +44,10 @@ class TField(private val manager: ResourceManager) : PropertyContainer {
     }
 }
 
-data class TPlayer(override var playerId: Int, var chipId: Int) : BasePlayer(playerId) {
+data class TPlayer(override var playerId: Int, override var iconId: Int, var chipId: Int) : BasePlayer(playerId, iconId) {
     operator fun invoke(p: TPlayer) {
         this.playerId = p.playerId
+        this.iconId = p.iconId
         this.chipId = p.chipId
     }
 }
@@ -62,7 +63,7 @@ class TGameHandler(private val game: TGame, context: Context) : BaseGameHandler(
         when (event.type) {
             GameEvent.Type.START -> {
                 state = State.RESUMED
-                players = game.players
+                players = game.players.toArray(arrayOf())
                 drawEngine.forwardCall(CallDrawBg(Color.GREEN))
                 drawEngine.forwardCall(CallDrawGrid(gameField.rows, gameField.columns, Color.BLACK))
             }
@@ -93,8 +94,9 @@ class TGame(private val context: Context)
     : BaseGame(GAME_TICTACTOE_ID, 5.0, R.string.game_t_title, R.string.game_t_description, R.drawable.ic_launcher_foreground),
         PropertyContainer {
     val manager = ResourceManager() // should be init. before all bindings
+    val playerManager = ResourceManager()
     private val hardcoreMode by bindResource(this, false, "hardcore mode", "Extra")
-    lateinit var players: Array<TPlayer>
+    val players by bindResource(playerManager, this, arrayListOf<TPlayer>(), "players", "game_menu")
     private val handler = TGameHandler(this, context)  // should be init. after manager
 
     override fun startGame() {
@@ -110,6 +112,6 @@ class TGame(private val context: Context)
     /* Property container */
     override fun getResourceManager() = manager
     override fun onPropertiesLock() {
-        players = arrayOf(TPlayer(1, if (hardcoreMode) 1 else 0), TPlayer(2, 1)) // Hardcore mode: same chips
+        playerManager.lockProperties(false)
     }
 }

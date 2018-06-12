@@ -10,7 +10,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="3dp">
+        android:layout_marginStart="4dp"
+        android:layout_marginBottom="4dp">
 
         <TextView
             android:id="@+id/prop_name_bool"

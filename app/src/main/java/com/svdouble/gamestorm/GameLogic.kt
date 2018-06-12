@@ -4,6 +4,9 @@ import android.content.Context
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
+/* Base resources */
+//const val PLAYER_ICONS = arrayOf(R.drawable.)
+
 /* Base classes */
 data class Cell2D(val x: Int, val y: Int) {
     operator fun plus(n: Int) = Cell2D(x + n, y + n)
@@ -11,7 +14,7 @@ data class Cell2D(val x: Int, val y: Int) {
     fun revert() = Cell2D(y, x)
 }
 
-open class BasePlayer(open val playerId: Int)
+open class BasePlayer(open var playerId: Int, open var iconId: Int)
 
 class GameEvent(val type: Type, val pos: Cell2D = Cell2D(-1, -1)) {
     enum class Type {
@@ -37,6 +40,7 @@ abstract class BaseGame(val gameId: Int, var rating: Double = 0.0, var titleRId:
 
 /* Settings */
 interface PropertyContainer {
+    // Attention: one PropertyContainer may have multiple resource managers
     fun getResourceManager(): ResourceManager
     fun onPropertiesLock()
 }
@@ -61,7 +65,7 @@ class ResourceManager {
     private var containers = mutableListOf<PropertyContainer>()
     private var propertiesLocked = false
 
-    fun <T : Any> registerProperty(pData: PropertyData<T>, pBounds: PropertyBounds<T>) {
+    fun <T : Any> attachProperty(pData: PropertyData<T>, pBounds: PropertyBounds<T> = PropertyBounds()) {
         val section = sections[pData.section]
         if (section != null && section.containsKey(pData.name))
             throw IllegalArgumentException("Property already exists!")
@@ -71,6 +75,10 @@ class ResourceManager {
             section[pData.name] = ResourcePair(pData.currentValue, pBounds) as RPair
         else
             sections[pData.section] = mutableMapOf(pData.name to ResourcePair(pData.currentValue, pBounds) as RPair)
+    }
+
+    fun <T: Any> detachProperty(pData: PropertyData<T>) {
+        sections[pData.section]!!.remove(pData.name)
     }
 
     fun <T : Any> getProperty(pData: PropertyData<T>): T =
@@ -91,9 +99,10 @@ class ResourceManager {
         containers.add(container)
     }
 
-    fun lockProperties() {
+    fun lockProperties(chained: Boolean = true) {
         propertiesLocked = true
-        containers.forEach { it.onPropertiesLock() }
+        if (chained)
+            containers.forEach { it.onPropertiesLock() }
     }
 }
 
@@ -103,7 +112,7 @@ class PropertyLoader<T : Any>(private val manager: ResourceManager,
 
     inner class PropertyDelegate : ReadOnlyProperty<PropertyContainer, T> {
         init {
-            manager.registerProperty(pData, pBounds)
+            manager.attachProperty(pData, pBounds)
         }
 
         override fun getValue(thisRef: PropertyContainer, property: KProperty<*>): T =
@@ -119,20 +128,36 @@ class PropertyLoader<T : Any>(private val manager: ResourceManager,
     }
 }
 
-fun <T : Any> bindResource(propContainer: PropertyContainer,
+/* Bind resource for containers with multiple managers */
+fun <T : Any> bindResource(resManager: ResourceManager,
+                           propContainer: PropertyContainer,
                            defaultValue: T,
                            name: String,
                            section: String,
                            vararg checkBounds: (T) -> Boolean)
         : PropertyLoader<T> {
     when (defaultValue::class) {
-        Boolean::class, Int::class, Double::class, String::class -> {
-            propContainer.getResourceManager().registerContainer(propContainer)
-            return PropertyLoader(propContainer.getResourceManager(), PropertyData(defaultValue, name, section), PropertyBounds(checkBounds))
+        Boolean::class, Int::class, Double::class, String::class, ArrayList::class -> {
+            resManager.registerContainer(propContainer)
+            return PropertyLoader(resManager, PropertyData(defaultValue, name, section), PropertyBounds(checkBounds))
         }
         else -> throw IllegalArgumentException("Type ${defaultValue::class.java} isn't supported!")
     }
 }
+
+/* Bind resource for containers with one manager */
+fun <T : Any> bindResource(propContainer: PropertyContainer,
+                           defaultValue: T,
+                           name: String,
+                           section: String,
+                           vararg checkBounds: (T) -> Boolean)
+        : PropertyLoader<T> =
+        bindResource(propContainer.getResourceManager(),
+                propContainer,
+                defaultValue,
+                name,
+                section,
+                *checkBounds)
 
 class Games private constructor(context: Context) {
     val games: Array<BaseGame> = arrayOf(TGame(context))

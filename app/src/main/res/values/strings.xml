@@ -11,13 +11,30 @@
     <string name="backdrop_title">Super game</string>
     <string name="backdrop_subtitle">play now</string>
     <string name="header_bg_description">Beautiful background</string>
+
     <string name="gi_button_play">Play</string>
     <string name="gi_button_settings">Settings</string>
     <string name="gi_button_wiki">Wiki</string>
     <string name="gi_button_scoreboard">Scoreboard</string>
     <string name="gi_button_back">Back</string>
+
     <string name="game_t_title">Tic-tac-toe</string>
     <string name="game_t_description">Description!</string>
     <string name="recycler_item_hint">decimal</string>
     <string name="settings_prop_name_pattern">%s: </string>
+
+    <string name="pa_title">Players</string>
+    <string name="pa_button_cancel">Cancel</string>
+    <string name="pa_button_start">Start</string>
+
+    <string name="lf_header_title">Login</string>
+    <string name="lf_content_nick_title">Nick</string>
+    <string name="lf_content_psw_title">Password</string>
+    <string name="lf_search_title">Search</string>
+    <string name="lf_footer_cancel">Cancel</string>
+    <string name="lf_footer_apply">Apply</string>
+    <string name="lf_search_status_descr">Status</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

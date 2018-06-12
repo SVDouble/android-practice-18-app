@@ -14,10 +14,10 @@ import kotlinx.android.synthetic.main.settings_header.view.*
 import kotlinx.android.synthetic.main.settings_item_bool.view.*
 import kotlinx.android.synthetic.main.settings_item_string.view.*
 
-const val SPAN_COUNT = 1 // Number of columns
+private const val SPAN_COUNT = 1 // Number of columns
 
 @Suppress("UNCHECKED_CAST")
-class PropertyWrapper<T : Any>(val manager: ResourceManager, var pData: PropertyData<T>, val pBounds: PropertyBounds<T>) : Item<ViewHolder>() {
+class PropertyWrapper<T : Any>(val manager: ResourceManager, var pData: PropertyData<T>, val pBounds: PropertyBounds<T> = PropertyBounds()) : Item<ViewHolder>() {
 
     override fun getLayout() =
             when (pData.currentValue::class) {
@@ -43,7 +43,7 @@ class PropertyWrapper<T : Any>(val manager: ResourceManager, var pData: Property
                     override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                         val value = view.prop_field_string.text?.toString()
                         if (!value.isNullOrEmpty() && !value!!.isBlank()) {
-                            val newValue = value.toInt() as? T
+                            val newValue = value.toIntOrNull() as? T
                             if (newValue != null && pBounds.checkProperty(newValue)) {
                                 manager.setProperty(pData.apply { currentValue = newValue })
                                 view.prop_name_string.setTextColor(GREEN)
@@ -70,7 +70,7 @@ class PropertyWrapper<T : Any>(val manager: ResourceManager, var pData: Property
                     override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                         val value = view.prop_field_string.text?.toString()
                         if (!value.isNullOrEmpty() && !value!!.isBlank()) {
-                            val newValue = value.toDouble() as? T
+                            val newValue = value.toDoubleOrNull() as? T
                             if (newValue != null && pBounds.checkProperty(newValue)) {
                                 manager.setProperty(pData.apply { currentValue = newValue })
                                 view.prop_name_string.setTextColor(GREEN)
@@ -98,37 +98,7 @@ class PropertyWrapper<T : Any>(val manager: ResourceManager, var pData: Property
     override fun getSpanSize(spanCount: Int, position: Int) = spanCount / SPAN_COUNT
 }
 
-class GameSettingsActivity : AppCompatActivity() {
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_game_settings)
-
-        val groupAdapter = GroupAdapter<ViewHolder>().apply {
-            spanCount = SPAN_COUNT
-        }
-
-        recyclerView.apply {
-            layoutManager = GridLayoutManager(this@GameSettingsActivity, groupAdapter.spanCount).apply {
-                spanSizeLookup = groupAdapter.spanSizeLookup
-            }
-            adapter = groupAdapter
-        }
-
-        when (intent.getIntExtra(INTENT_ID_KEY, -1)) {
-            GAME_TICTACTOE_ID -> {
-                val manager = (Games.getInstance(this).games[0] as TGame).manager
-                for ((title, section) in manager.sections)
-                    ExpandableGroup(ExpandableHeaderItem(title), false).apply {
-                        add(Section(section.map { (name, res) -> PropertyWrapper(manager, PropertyData(res.first, name, title), res.second) }))
-                        groupAdapter.add(this)
-                    }
-            }
-        }
-    }
-}
-
-class ExpandableHeaderItem(val title: String) : Item<ViewHolder>(), ExpandableItem {
+class ExpandableSettingsHeaderItem(val title: String) : Item<ViewHolder>(), ExpandableItem {
 
     private lateinit var expandableGroup: ExpandableGroup
 
@@ -150,7 +120,37 @@ class ExpandableHeaderItem(val title: String) : Item<ViewHolder>(), ExpandableIt
 
     private fun getIcon() =
             if (expandableGroup.isExpanded)
-                android.R.drawable.ic_delete
+                android.R.drawable.arrow_up_float
             else
-                android.R.drawable.ic_input_add
+                android.R.drawable.arrow_down_float
+}
+
+class GameSettingsActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_game_settings)
+
+        val groupAdapter = GroupAdapter<ViewHolder>().apply {
+            spanCount = SPAN_COUNT
+        }
+
+        recyclerView.apply {
+            layoutManager = GridLayoutManager(this@GameSettingsActivity, groupAdapter.spanCount).apply {
+                spanSizeLookup = groupAdapter.spanSizeLookup
+            }
+            adapter = groupAdapter
+        }
+
+        when (intent.getIntExtra(INTENT_ID_KEY, -1)) {
+            GAME_TICTACTOE_ID -> {
+                val manager = (Games.getInstance(this).games[0] as TGame).manager
+                for ((title, section) in manager.sections)
+                    ExpandableGroup(ExpandableSettingsHeaderItem(title), false).apply {
+                        add(Section(section.map { (name, res) -> PropertyWrapper(manager, PropertyData(res.first, name, title), res.second) }))
+                        groupAdapter.add(this)
+                    }
+            }
+        }
+    }
 }
