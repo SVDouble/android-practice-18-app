@@ -12,7 +12,7 @@ import java.lang.Math.abs
 import java.util.*
 
 
-const val pieceSideSize : Float = 30f
+const val pieceSideSize : Float = 40f
 
 
 class Piece( x1 : Float, y1 : Float )
@@ -79,6 +79,7 @@ class Draw2D(context: Context) : View(context) {
     var heightPoints : Int = 0
 
     var snake : Snake = Snake()
+    var timer : Timer = Timer()
 
     private var apple : Piece = Piece(0f,0f)
 
@@ -90,7 +91,7 @@ class Draw2D(context: Context) : View(context) {
         return false
     }
 
-    fun makeNewApple( )
+    fun makeNewApple()
     {
 
         do {
@@ -167,6 +168,10 @@ class Draw2D(context: Context) : View(context) {
         }
         else
             snake.move()
+        for ( i in 1..(snake.body.size-1))
+            if( snake.body[i].x == snake.body[0].x &&  snake.body[i].y == snake.body[0].y )
+                timer.cancel()
+
         postInvalidate()
     }
 
@@ -185,8 +190,6 @@ open class SnakeActivity : AppCompatActivity() {
         val draw2D = Draw2D(this)
 
         setContentView(draw2D)
-
-        Timer().schedule( TimerHandle(draw2D), 1000, 200 )
-
+        draw2D.timer.schedule( TimerHandle(draw2D), 1000, 200 )
     }
 }
