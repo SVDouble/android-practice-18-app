@@ -1,5 +1,4 @@
 package com.svdouble.gamestorm
-
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color.*
@@ -25,7 +24,7 @@ class Snake
 {
     var body : Vector< Piece > = Vector()
 
-    var deltaX : Float = 0f
+    var deltaX : Float = 1f
     var deltaY : Float = 0f
 
     var fieldWidth : Float = 0f
@@ -119,14 +118,26 @@ class Draw2D(context: Context) : View(context) {
             this.yPath = event.y
 
 
-            if(this.xPath > 3f/4f*w && this.yPath < 3f/4f*h && this.yPath > h*1f/4f && snake.deltaX != -1f) {
+            /*if(this.xPath > 3f/4f*w && this.yPath < 3f/4f*h && this.yPath > h*1f/4f && snake.deltaX != -1f) {
                 snake.deltaX = 1f;snake.deltaY = 0f }
             if(this.yPath > 3f/4f*h && this.xPath > w*1f/4f && this.xPath < w*3f/4f && snake.deltaY != -1f){
                 snake.deltaY = 1f;snake.deltaX = 0f}
             if(this.xPath < 1f/4f*w && this.yPath < 3f/4f*h && this.yPath > h*1f/4f && snake.deltaX != 1f ){
                 snake.deltaX = -1f;snake.deltaY = 0f}
             if(this.yPath < 1f/4f*h && this.xPath < w*3f/4f && this.xPath > w*1f/4f && snake.deltaY != 1f){
-                snake.deltaY = -1f;snake.deltaX = 0f}
+                snake.deltaY = -1f;snake.deltaX = 0f}*/
+
+            if((this.xPath > 1f/2f*w && snake.deltaX == 1f) || (this.xPath < 1f/2f*w && snake.deltaX == -1f)){
+                snake.deltaX = 0f; snake.deltaY = 1f}
+            else if((this.xPath > 1f/2f*w && snake.deltaX == -1f) || (this.xPath < 1f/2f*w && snake.deltaX == 1f)){
+                snake.deltaX = 0f; snake.deltaY = -1f}
+            else if((this.xPath > 1f/2f*w && snake.deltaY == 1f) || (this.xPath < 1f/2f*w && snake.deltaY == -1f)){
+                snake.deltaX = -1f; snake.deltaY = 0f}
+            else if((this.xPath > 1f/2f*w && snake.deltaY == -1f) || (this.xPath < 1f/2f*w && snake.deltaY == 1f)){
+                snake.deltaX = 1f; snake.deltaY = 0f}
+
+
+
             this.invalidate()
         }
         return super.onTouchEvent(event)
@@ -182,6 +193,7 @@ class TimerHandle( view1 : Draw2D ) : TimerTask() {
     override fun run(){
         view.onTimer()}
 }
+
 
 open class SnakeActivity : AppCompatActivity() {
 
