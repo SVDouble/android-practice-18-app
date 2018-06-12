@@ -19,7 +19,9 @@ class Piece(x1: Float, y1: Float) {
     var y: Float = y1
 }
 
-class Snake {
+class Snake(colorIn:Int) {
+
+    var color = colorIn
     var body: Vector<Piece> = Vector()
 
     var deltaX: Float = 1f
@@ -60,7 +62,7 @@ class Snake {
     }
 }
 
-class Draw2D(context: Context) : View(context) {
+class Draw2D(context: Context, col:Int) : View(context) {
 
 
     private val mPaint = Paint()
@@ -72,7 +74,7 @@ class Draw2D(context: Context) : View(context) {
     private var heightPoints: Int = 0
     private var k: Int = 0
 
-    private var snake: Snake = Snake()
+    private var snake: Snake = Snake( col )
     var timer: Timer = Timer()
 
     private var apple: Piece = Piece(0f, 0f)
@@ -109,16 +111,7 @@ class Draw2D(context: Context) : View(context) {
             this.xPath = event.x
             this.yPath = event.y
 
-
-            /*if(this.xPath > 3f/4f*w && this.yPath < 3f/4f*h && this.yPath > h*1f/4f && snake.deltaX != -1f) {
-                snake.deltaX = 1f;snake.deltaY = 0f }
-            if(this.yPath > 3f/4f*h && this.xPath > w*1f/4f && this.xPath < w*3f/4f && snake.deltaY != -1f){
-                snake.deltaY = 1f;snake.deltaX = 0f}
-            if(this.xPath < 1f/4f*w && this.yPath < 3f/4f*h && this.yPath > h*1f/4f && snake.deltaX != 1f ){
-                snake.deltaX = -1f;snake.deltaY = 0f}
-            if(this.yPath < 1f/4f*h && this.xPath < w*3f/4f && this.xPath > w*1f/4f && snake.deltaY != 1f){
-                snake.deltaY = -1f;snake.deltaX = 0f}*/
-            if(k==1) {
+            if(k == 1) {
                 if ((this.xPath > 1f / 2f * w && snake.deltaX == 1f) || (this.xPath < 1f / 2f * w && snake.deltaX == -1f)) {
                     snake.deltaX = 0f; snake.deltaY = 1f
                 } else if ((this.xPath > 1f / 2f * w && snake.deltaX == -1f) || (this.xPath < 1f / 2f * w && snake.deltaX == 1f)) {
@@ -153,8 +146,8 @@ class Draw2D(context: Context) : View(context) {
         mPaint.color = BLUE
         canvas.drawCircle((apple.x * pieceSideSize + (apple.x + 1) * pieceSideSize) / 2, (apple.y * pieceSideSize + (apple.y + 1) * pieceSideSize) / 2,
                 pieceSideSize / 2, mPaint)
+        canvas.drawText("${this.e1}    ${this.e2}", 24f, 500f, mPaint)
 
-        mPaint.color = RED
         for (el in snake.body) {
             canvas.drawRect(el.x * pieceSideSize, el.y * pieceSideSize,
                     (el.x + 1) * pieceSideSize, (el.y + 1) * pieceSideSize, mPaint)
@@ -169,8 +162,7 @@ class Draw2D(context: Context) : View(context) {
             k = 1
         }
         else{
-            snake.move();k = 1
-        }
+            snake.move();k = 1}
         for (i in 1..(snake.body.size - 1))
             if (snake.body[i].x == snake.body[0].x && snake.body[i].y == snake.body[0].y)
                 timer.cancel()
@@ -187,14 +179,13 @@ class TimerHandle(view1: Draw2D) : TimerTask() {
     }
 }
 
-
-open class SnakeActivity : AppCompatActivity() {
+open class SnakeActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val draw2D = Draw2D(this)
+        val draw2D = Draw2D(this, GREEN)
 
         setContentView(draw2D)
-        draw2D.timer.schedule( TimerHandle(draw2D), 1000, 200 )
+        draw2D.timer.schedule(TimerHandle(draw2D), 1000, 250)
     }
 }
