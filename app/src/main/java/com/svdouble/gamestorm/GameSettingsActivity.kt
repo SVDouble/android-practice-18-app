@@ -2,6 +2,7 @@ package com.svdouble.gamestorm
 
 import android.graphics.Color.GREEN
 import android.graphics.Color.RED
+import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
@@ -19,6 +20,8 @@ private const val SPAN_COUNT = 1 // Number of columns
 @Suppress("UNCHECKED_CAST")
 class PropertyWrapper<T : Any>(val manager: ResourceManager, var pData: PropertyData<T>, val pBounds: PropertyBounds<T> = PropertyBounds()) : Item<ViewHolder>() {
 
+    lateinit var title: String
+
     override fun getLayout() =
             when (pData.currentValue::class) {
                 Int::class, Double::class, String::class -> R.layout.settings_item_string
@@ -30,8 +33,8 @@ class PropertyWrapper<T : Any>(val manager: ResourceManager, var pData: Property
         val view = viewHolder.itemView
         when (pData.currentValue::class) {
             Int::class -> {
-                view.prop_name_string.text =
-                        viewHolder.itemView.resources.getString(R.string.settings_prop_name_pattern).format(pData.name)
+                changeTitle(viewHolder.itemView.resources.getString(R.string.settings_prop_name_pattern).format(pData.name), true)
+                view.prop_name_string.text = title
                 view.prop_name_string.setTextColor(GREEN)
                 view.prop_field_string.setText(pData.currentValue.toString())
                 view.prop_field_string.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
@@ -57,8 +60,8 @@ class PropertyWrapper<T : Any>(val manager: ResourceManager, var pData: Property
                 })
             }
             Double::class -> {
-                view.prop_name_string.text =
-                        viewHolder.itemView.resources.getString(R.string.settings_prop_name_pattern).format(pData.name)
+                changeTitle(viewHolder.itemView.resources.getString(R.string.settings_prop_name_pattern).format(pData.name), true)
+                view.prop_name_string.text = title
                 view.prop_name_string.setTextColor(GREEN)
                 view.prop_field_string.setText(pData.currentValue.toString())
                 view.prop_field_string.inputType = InputType.TYPE_CLASS_NUMBER
@@ -84,8 +87,8 @@ class PropertyWrapper<T : Any>(val manager: ResourceManager, var pData: Property
                 })
             }
             Boolean::class -> {
-                view.prop_name_bool.text =
-                        viewHolder.itemView.resources.getString(R.string.settings_prop_name_pattern).format(pData.name)
+                changeTitle(viewHolder.itemView.resources.getString(R.string.settings_prop_name_pattern).format(pData.name), true)
+                view.prop_name_bool.text = title
                 view.prop_name_bool.setTextColor(GREEN)
                 view.prop_field_bool.isChecked = pData.currentValue as Boolean
                 view.prop_field_bool.setOnCheckedChangeListener { _, state ->
@@ -96,6 +99,13 @@ class PropertyWrapper<T : Any>(val manager: ResourceManager, var pData: Property
     }
 
     override fun getSpanSize(spanCount: Int, position: Int) = spanCount / SPAN_COUNT
+
+    fun changeTitle(newTitle: String, bind: Boolean = false) {
+        if (!bind)
+            title = newTitle
+        else if (!::title.isInitialized)
+            title = newTitle
+    }
 }
 
 class ExpandableSettingsHeaderItem(val title: String) : Item<ViewHolder>(), ExpandableItem {
