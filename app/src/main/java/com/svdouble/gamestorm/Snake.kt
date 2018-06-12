@@ -138,16 +138,13 @@ class Draw2D(context: Context, col:Int) : View(context) {
         canvas.drawPaint(mPaint)
         mPaint.color = BLUE
 
-
-        //if(apple.x == )
         canvas.drawLine(0f, snake.fieldHeight - (snake.fieldHeight % pieceSideSize), snake.fieldWidth - (snake.fieldWidth % pieceSideSize), snake.fieldHeight - (snake.fieldHeight % pieceSideSize), mPaint)
         canvas.drawLine(snake.fieldWidth - (snake.fieldWidth % pieceSideSize), 0f, snake.fieldWidth - (snake.fieldWidth % pieceSideSize), snake.fieldHeight - (snake.fieldHeight % pieceSideSize), mPaint)
 
-        mPaint.color = BLUE
+        mPaint.color = RED
         canvas.drawCircle((apple.x * pieceSideSize + (apple.x + 1) * pieceSideSize) / 2, (apple.y * pieceSideSize + (apple.y + 1) * pieceSideSize) / 2,
                 pieceSideSize / 2, mPaint)
-        canvas.drawText("${this.e1}    ${this.e2}", 24f, 500f, mPaint)
-
+        mPaint.color = snake.color
         for (el in snake.body) {
             canvas.drawRect(el.x * pieceSideSize, el.y * pieceSideSize,
                     (el.x + 1) * pieceSideSize, (el.y + 1) * pieceSideSize, mPaint)
