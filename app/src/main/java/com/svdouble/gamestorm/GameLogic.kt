@@ -175,4 +175,3 @@ class Games private constructor(context: Context) {
 
     companion object : SingletonHolder<Games, Context>(::Games)
 }
-
