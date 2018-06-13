@@ -41,13 +41,19 @@ class LoginFragment : Fragment() {
 
     override fun onStart() {
         super.onStart()
+        view?.background = ColorDrawable(Color.argb(100, 0, 0, 0))
         lf_footer_cancel?.setOnClickListener {
             activity?.supportFragmentManager?.beginTransaction()?.remove(this)?.commit()
         }
-    }
-
-    fun onButtonPressed(uri: Uri) {
-        listener?.onFragmentInteraction(uri)
+        lf_footer_apply.setOnClickListener {
+            val name = lf_content_nick_field.text
+            if (!name.isNullOrEmpty())
+                listener?.onNewPlayer(TPlayer(BasePlayer.generatePlayerId(),
+                        -1, 0), name.toString())
+        }
+        /*
+        view?.isFocusableInTouchMode = true
+        view?.requestFocus() */
     }
 
     override fun onAttach(context: Context) {
@@ -65,8 +71,7 @@ class LoginFragment : Fragment() {
     }
 
     interface OnLoginFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onFragmentInteraction(uri: Uri)
+        fun onNewPlayer(newPlayer: BasePlayer, name: String)
     }
 
     companion object {

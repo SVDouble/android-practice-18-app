@@ -1,6 +1,7 @@
 package com.svdouble.gamestorm
 
 import android.content.Context
+import java.util.*
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
@@ -14,7 +15,17 @@ data class Cell2D(val x: Int, val y: Int) {
     fun revert() = Cell2D(y, x)
 }
 
-open class BasePlayer(open var playerId: Int, open var iconId: Int)
+open class BasePlayer(open var id: String, open var iconId: Int) {
+    companion object {
+        private fun ClosedRange<Char>.randomString(lenght: Int) =
+                (1..lenght)
+                        .map { (Random().nextInt(endInclusive.toInt() - start.toInt()) + start.toInt()).toChar() }
+                        .joinToString("")
+        fun generatePlayerId() : String =
+                ('a'..'z').randomString(6)
+
+    }
+}
 
 class GameEvent(val type: Type, val pos: Cell2D = Cell2D(-1, -1)) {
     enum class Type {
@@ -79,6 +90,10 @@ class ResourceManager {
 
     fun <T: Any> detachProperty(pData: PropertyData<T>) {
         sections[pData.section]!!.remove(pData.name)
+    }
+
+    fun <T: Any> attachPropertyListener() {
+        
     }
 
     fun <T : Any> getProperty(pData: PropertyData<T>): T =

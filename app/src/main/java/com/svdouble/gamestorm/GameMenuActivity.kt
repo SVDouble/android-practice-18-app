@@ -20,6 +20,7 @@ class ExpandableMenuHeaderItem(val player: TPlayer) : Item<ViewHolder>(), Expand
 
     override fun bind(viewHolder: ViewHolder, position: Int) {
         //viewHolder.itemView.pa_item_player_icon.setImageResource(player.iconId)
+        viewHolder.itemView.pa_item_player_name.text = player.id
 
         viewHolder.itemView.pa_item_player_name.setOnClickListener {
             expandableGroup.onToggleExpanded()
@@ -42,14 +43,16 @@ class ExpandableMenuHeaderItem(val player: TPlayer) : Item<ViewHolder>(), Expand
 
 class GameMenuActivity : AppCompatActivity(), LoginFragment.OnLoginFragmentInteractionListener {
 
+    private lateinit var playerManager: ResourceManager
     private lateinit var viewAdapter: CardAdapter
     private lateinit var viewManager: GridLayoutManager
+    private lateinit var groupAdapter: GroupAdapter<ViewHolder>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game_menu)
 
-        val groupAdapter = GroupAdapter<ViewHolder>()
+        groupAdapter = GroupAdapter()
         user_list.apply {
             layoutManager = GridLayoutManager(this@GameMenuActivity, groupAdapter.spanCount).apply {
                 spanSizeLookup = groupAdapter.spanSizeLookup
@@ -66,21 +69,18 @@ class GameMenuActivity : AppCompatActivity(), LoginFragment.OnLoginFragmentInter
                 gm_buttons_play.setOnClickListener { startActivity(Intent(this, CanvasActivity::class.java).putExtra(INTENT_ID_KEY, GAME_TICTACTOE_ID)) }
                 gm_buttons_settings.setOnClickListener { startActivity(Intent(this, GameSettingsActivity::class.java).putExtra(INTENT_ID_KEY, GAME_TICTACTOE_ID))}
                 gm_header_button_add.setOnClickListener {
-                    //activity_game_menu.background = ColorDrawable(Color.argb(100, 0, 0, 0))
                     supportFragmentManager.beginTransaction().add(R.id.activity_game_menu, LoginFragment.newInstance("", "")).commit()
                 }
 
                 /* Player settings */
-                val manager by lazy { (Games.getInstance(this).games[0] as TGame).playerManager.apply {
-                    setProperty(PropertyData(arrayListOf(TPlayer(0, -1, 0), TPlayer(1, -1, 1)), "players", "game_menu"))
-                } }
-                val players = manager.getProperty(PropertyData(arrayListOf<TPlayer>(), "players", "game_menu"))
+                playerManager = (Games.getInstance(this).games[0] as TGame).playerManager
+                val players = playerManager.getProperty(PropertyData(arrayListOf<TPlayer>(), "players", "game_menu"))
 
                 for (player in players) {
-                    val pData = PropertyData(player.chipId, "~${player.playerId}", TEMP_SECTION)
-                    manager.attachProperty(pData)
+                    val pData = PropertyData(player.chipId, "~${player.id}", TEMP_SECTION)
+                    playerManager.attachProperty(pData)
                     ExpandableGroup(ExpandableMenuHeaderItem(player), false).apply {
-                        add(Section(PropertyWrapper(manager, pData).apply { changeTitle("IconId: ") }))
+                        add(Section(PropertyWrapper(playerManager, pData).apply { changeTitle("IconId: ") }))
                         groupAdapter.add(this)
                     }
                 }
@@ -90,7 +90,15 @@ class GameMenuActivity : AppCompatActivity(), LoginFragment.OnLoginFragmentInter
         gm_buttons_back.setOnClickListener { startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)) }
     }
 
-    override fun onFragmentInteraction(uri: Uri) {
+    override fun onNewPlayer(newPlayer: BasePlayer, name: String) {
+        val player = newPlayer as TPlayer
+        val pData = PropertyData(player.chipId, "~${player.id}", TEMP_SECTION)
+        playerManager.getProperty(PropertyData(arrayListOf<TPlayer>(), "players", "game_menu")).add(player)
+        playerManager.attachProperty(pData)
+        ExpandableGroup(ExpandableMenuHeaderItem(player), false).apply {
+            add(Section(PropertyWrapper(playerManager, pData).apply { changeTitle("IconId: ") }))
+            groupAdapter.add(this)
+        }
     }
 }
 

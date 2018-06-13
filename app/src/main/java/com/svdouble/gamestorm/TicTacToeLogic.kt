@@ -11,7 +11,7 @@ class TField(private val manager: ResourceManager) : PropertyContainer {
 
     override fun getResourceManager() = manager
     override fun onPropertiesLock() {
-        tField = Array(columns) { Array(rows) { TPlayer(-1, -1, -1) } }
+        tField = Array(columns) { Array(rows) { TPlayer("null", -1, -1) } }
     }
 
     val rows by bindResource(this, 3, "rows", "Field", { it in 2..10 })
@@ -31,11 +31,11 @@ class TField(private val manager: ResourceManager) : PropertyContainer {
                 check@ for (pattern in standardPatterns) {
                     for (cell in pattern) {
                         val point = cell + Cell2D(column, row)
-                        if (tField[column][row].playerId == -1 // cell is not in game
+                        if (tField[column][row].id == "null" // cell is not in game
                                 || point.x < 0 || point.x >= columns
                                 || point.y < 0 || point.y >= rows)
                             continue@check
-                        else if (tField[point.x][point.y].playerId != tField[column][row].playerId)
+                        else if (tField[point.x][point.y].id != tField[column][row].id)
                             continue@check
                     }
                     return Array(pattern.size) { i -> pattern[i] + Cell2D(column + 1, row + 1) }
@@ -44,16 +44,16 @@ class TField(private val manager: ResourceManager) : PropertyContainer {
     }
 }
 
-data class TPlayer(override var playerId: Int, override var iconId: Int, var chipId: Int) : BasePlayer(playerId, iconId) {
+data class TPlayer(override var id: String, override var iconId: Int, var chipId: Int) : BasePlayer(id, iconId) {
     operator fun invoke(p: TPlayer) {
-        this.playerId = p.playerId
+        this.id = p.id
         this.iconId = p.iconId
         this.chipId = p.chipId
     }
 }
 
 class TGameHandler(private val game: TGame, context: Context) : BaseGameHandler() {
-    override val drawEngine = CellularDrawEngine2D(context, this)
+    override var drawEngine = CellularDrawEngine2D(context, this)
     private val gameField = TField(game.manager)
     override var state = State.INIT
     private lateinit var players: Array<TPlayer>
@@ -68,7 +68,7 @@ class TGameHandler(private val game: TGame, context: Context) : BaseGameHandler(
                 drawEngine.forwardCall(CallDrawGrid(gameField.rows, gameField.columns, Color.BLACK))
             }
             GameEvent.Type.STEP -> {
-                if (state == State.RESUMED && gameField.tField[event.pos.x][event.pos.y].playerId == -1) {
+                if (state == State.RESUMED && gameField.tField[event.pos.x][event.pos.y].id == "null") {
                     drawEngine.forwardCall(CallDrawChip(event.pos + 1, players[currentPlayer].chipId))
                     gameField.tField[event.pos.x][event.pos.y](players[currentPlayer])
                     val checkResult = gameField.checkField()
@@ -100,8 +100,10 @@ class TGame(private val context: Context)
     private val handler = TGameHandler(this, context)  // should be init. after manager
 
     override fun startGame() {
-        manager.lockProperties()
-        handler.dispatchEvent(GameEvent(GameEvent.Type.START))
+        if (players.size > 0) {
+            manager.lockProperties()
+            handler.dispatchEvent(GameEvent(GameEvent.Type.START))
+        }
     }
 
     override fun generateGameCard() = GameCard(gameId, context.getString(titleRId), rating, thumbResourceRId)
