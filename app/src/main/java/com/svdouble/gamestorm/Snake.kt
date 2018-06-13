@@ -3,6 +3,8 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color.*
 import android.graphics.Paint
+import android.graphics.Paint.Style.FILL
+import android.hardware.camera2.params.BlackLevelPattern
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -74,6 +76,8 @@ class Draw2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPlayer) : View
     private var widthPoints: Int = 0
     private var heightPoints: Int = 0
     private var k: Int = 0
+    private var n: Int = 1
+    private var appleeaten: Int = 0
     private var MP1 = mp1
     private var MP2:MediaPlayer = mp2
     private var snake: Snake = Snake( col )
@@ -136,10 +140,10 @@ class Draw2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPlayer) : View
         super.onDraw(canvas)
 
         mPaint.color = YELLOW
-        mPaint.style = Paint.Style.FILL
+        mPaint.style = FILL
         canvas.drawPaint(mPaint)
         mPaint.color = BLUE
-
+        mPaint.strokeWidth = 1.0f
         canvas.drawLine(0f, snake.fieldHeight - (snake.fieldHeight % pieceSideSize), snake.fieldWidth - (snake.fieldWidth % pieceSideSize), snake.fieldHeight - (snake.fieldHeight % pieceSideSize), mPaint)
         canvas.drawLine(snake.fieldWidth - (snake.fieldWidth % pieceSideSize), 0f, snake.fieldWidth - (snake.fieldWidth % pieceSideSize), snake.fieldHeight - (snake.fieldHeight % pieceSideSize), mPaint)
 
@@ -148,9 +152,17 @@ class Draw2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPlayer) : View
                 pieceSideSize / 2, mPaint)
         mPaint.color = snake.color
         for (el in snake.body) {
-            canvas.drawRect(el.x * pieceSideSize, el.y * pieceSideSize,
-                    (el.x + 1) * pieceSideSize, (el.y + 1) * pieceSideSize, mPaint)
-        }
+            canvas.drawCircle((el.x * pieceSideSize + (el.x + 1) * pieceSideSize) / 2, (el.y * pieceSideSize + (el.y + 1) * pieceSideSize) / 2,
+                    pieceSideSize / 2, mPaint) }
+        
+        mPaint.color = BLACK
+        mPaint.style = FILL
+        mPaint.isAntiAlias = true
+        mPaint.textSize = 40.0f
+        mPaint.strokeWidth = 3.0f
+        mPaint.style = Paint.Style.STROKE
+        if(n == 0)
+            canvas.drawText("your record: $appleeaten", snake.fieldWidth/4f, snake.fieldHeight/2, mPaint)
 
     }
 
@@ -159,12 +171,13 @@ class Draw2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPlayer) : View
             snake.eat()
             makeNewApple()
             k = 1
+            appleeaten+=1
         }
         else{
             snake.move();k = 1}
         for (i in 1..(snake.body.size - 1))
             if (snake.body[i].x == snake.body[0].x && snake.body[i].y == snake.body[0].y) {
-                timer.cancel();MP1.stop();MP2.start()
+                timer.cancel();MP1.stop();MP2.start(); n= 0
             }
 
         postInvalidate()
@@ -189,6 +202,5 @@ open class SnakeActivity: AppCompatActivity() {
         val draw2D = Draw2D(this, GREEN, mp1, mp2)
         setContentView(draw2D)
         draw2D.timer.schedule(TimerHandle(draw2D), 500, 150)
-
     }
 }
