@@ -84,7 +84,12 @@ class GameMenuActivity : AppCompatActivity(), LoginFragment.OnLoginFragmentInter
                         groupAdapter.add(this)
                     }
                 }
-
+            }
+            GAME_SNAKE_ID -> {
+                val sGame = Games.getInstance(this).games[1] as SGame
+                gm_title.text = getString(sGame.titleRId)
+                gm_buttons_play.setOnClickListener { startActivity(Intent(this, SnakeActivity::class.java).putExtra(INTENT_ID_KEY, GAME_SNAKE_ID)) }
+                gm_buttons_settings.setOnClickListener { startActivity(Intent(this, GameSettingsActivity::class.java).putExtra(INTENT_ID_KEY, GAME_TICTACTOE_ID))}
             }
         }
         gm_buttons_back.setOnClickListener { startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)) }

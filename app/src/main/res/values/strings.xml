@@ -35,4 +35,6 @@
     <string name="lf_footer_apply">Apply</string>
     <string name="lf_search_status_descr">Status</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="game_s_title">Snake</string>
+    <string name="game_s_description">Wow, snake!</string>
 </resources>

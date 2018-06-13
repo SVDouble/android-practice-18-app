@@ -179,7 +179,7 @@ class TimerHandle(view1: Draw2D) : TimerTask() {
     }
 }
 
-open class SnakeActivity: AppCompatActivity() {
+class SnakeActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -189,6 +189,6 @@ open class SnakeActivity: AppCompatActivity() {
         val draw2D = Draw2D(this, GREEN, mp1, mp2)
         setContentView(draw2D)
         draw2D.timer.schedule(TimerHandle(draw2D), 500, 150)
-
     }
 }
+

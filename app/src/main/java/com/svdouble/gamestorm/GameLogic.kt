@@ -170,8 +170,9 @@ fun <T : Any> bindResource(propContainer: PropertyContainer,
                 section,
                 *checkBounds)
 
+/* Container for all games */
 class Games private constructor(context: Context) {
-    val games: Array<BaseGame> = arrayOf(TGame(context))
+    val games: Array<BaseGame> = arrayOf(TGame(context), SGame(context))
 
     companion object : SingletonHolder<Games, Context>(::Games)
 }
