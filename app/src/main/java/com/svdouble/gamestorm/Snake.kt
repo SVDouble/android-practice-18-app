@@ -63,7 +63,7 @@ class Snake(colorIn:Int) {
     }
 }
 
-class Draw2D(context: Context, col:Int, mp:MediaPlayer) : View(context) {
+class Draw2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPlayer) : View(context) {
 
 
     private val mPaint = Paint()
@@ -74,7 +74,8 @@ class Draw2D(context: Context, col:Int, mp:MediaPlayer) : View(context) {
     private var widthPoints: Int = 0
     private var heightPoints: Int = 0
     private var k: Int = 0
-    private var MP = mp
+    private var MP1 = mp1
+    private var MP2:MediaPlayer = mp2
     private var snake: Snake = Snake( col )
     var timer: Timer = Timer()
 
@@ -163,7 +164,7 @@ class Draw2D(context: Context, col:Int, mp:MediaPlayer) : View(context) {
             snake.move();k = 1}
         for (i in 1..(snake.body.size - 1))
             if (snake.body[i].x == snake.body[0].x && snake.body[i].y == snake.body[0].y) {
-                timer.cancel();MP.stop()
+                timer.cancel();MP1.stop();MP2.start()
             }
 
         postInvalidate()
@@ -182,9 +183,10 @@ open class SnakeActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val mp = MediaPlayer.create(this, R.raw.pac)
-        mp.start()
-        val draw2D = Draw2D(this, GREEN, mp)
+        val mp1 = MediaPlayer.create(this, R.raw.pac)
+        val mp2 = MediaPlayer.create(this, R.raw.hell)
+        mp1.start()
+        val draw2D = Draw2D(this, GREEN, mp1, mp2)
         setContentView(draw2D)
         draw2D.timer.schedule(TimerHandle(draw2D), 500, 150)
 
