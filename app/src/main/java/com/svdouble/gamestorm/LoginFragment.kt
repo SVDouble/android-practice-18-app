@@ -49,7 +49,7 @@ class LoginFragment : Fragment() {
             val name = lf_content_nick_field.text
             if (!name.isNullOrEmpty())
                 listener?.onNewPlayer(TPlayer(BasePlayer.generatePlayerId(),
-                        -1, 0), name.toString())
+                        -1, temp++ % 2), name.toString())
         }
         /*
         view?.isFocusableInTouchMode = true
@@ -75,6 +75,8 @@ class LoginFragment : Fragment() {
     }
 
     companion object {
+        var temp = 0
+
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
                 LoginFragment()

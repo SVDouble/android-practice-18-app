@@ -92,10 +92,6 @@ class ResourceManager {
         sections[pData.section]!!.remove(pData.name)
     }
 
-    fun <T: Any> attachPropertyListener() {
-        
-    }
-
     fun <T : Any> getProperty(pData: PropertyData<T>): T =
             sections[pData.section]?.get(pData.name)!!.first as T
 
