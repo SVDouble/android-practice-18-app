@@ -2,6 +2,7 @@ package com.svdouble.gamestorm
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import kotlinx.android.synthetic.main.activity_base_canvas.*
 
 const val TAG = "GameStorm"
 
@@ -12,12 +13,13 @@ class CanvasActivity : AppCompatActivity() {
 
         when(intent.getIntExtra(INTENT_ID_KEY, -1)) {
             GAME_TICTACTOE_ID -> {
-                val tGame = Games.getInstance(this).games[0] as TGame
+                setContentView(R.layout.activity_base_canvas)
+                val tGame = Games.getInstance(lin.context).games[0] as TGame
+                lin.addView(tGame.getDrawEngine())
                 if (tGame.getState() == BaseGameHandler.State.INIT)
                     tGame.startGame()
-                setContentView(tGame.getDrawEngine())
             }
-            else -> setContentView(R.layout.activity_base_canvas)
+            else -> setContentView(R.layout.almost_empty_layout)
         }
     }
 
@@ -26,8 +28,7 @@ class CanvasActivity : AppCompatActivity() {
 
         when(intent.getIntExtra(INTENT_ID_KEY, -1)) {
             GAME_TICTACTOE_ID -> {
-                // detach drawEngine
-                setContentView(R.layout.activity_base_canvas)
+                lin.removeAllViews()
             }
         }
     }

@@ -2,6 +2,7 @@ package com.svdouble.gamestorm
 
 import android.graphics.Color.GREEN
 import android.graphics.Color.RED
+import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
@@ -14,10 +15,12 @@ import kotlinx.android.synthetic.main.settings_header.view.*
 import kotlinx.android.synthetic.main.settings_item_bool.view.*
 import kotlinx.android.synthetic.main.settings_item_string.view.*
 
-const val SPAN_COUNT = 1 // Number of columns
+private const val SPAN_COUNT = 1 // Number of columns
 
 @Suppress("UNCHECKED_CAST")
-class PropertyWrapper<T : Any>(val manager: ResourceManager, var pData: PropertyData<T>, val pBounds: PropertyBounds<T>) : Item<ViewHolder>() {
+class PropertyWrapper<T : Any>(val manager: ResourceManager, var pData: PropertyData<T>, val pBounds: PropertyBounds<T> = PropertyBounds()) : Item<ViewHolder>() {
+
+    lateinit var title: String
 
     override fun getLayout() =
             when (pData.currentValue::class) {
@@ -30,8 +33,8 @@ class PropertyWrapper<T : Any>(val manager: ResourceManager, var pData: Property
         val view = viewHolder.itemView
         when (pData.currentValue::class) {
             Int::class -> {
-                view.prop_name_string.text =
-                        viewHolder.itemView.resources.getString(R.string.settings_prop_name_pattern).format(pData.name)
+                changeTitle(viewHolder.itemView.resources.getString(R.string.settings_prop_name_pattern).format(pData.name), true)
+                view.prop_name_string.text = title
                 view.prop_name_string.setTextColor(GREEN)
                 view.prop_field_string.setText(pData.currentValue.toString())
                 view.prop_field_string.inputType = InputType.TYPE_NUMBER_FLAG_DECIMAL
@@ -43,7 +46,7 @@ class PropertyWrapper<T : Any>(val manager: ResourceManager, var pData: Property
                     override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                         val value = view.prop_field_string.text?.toString()
                         if (!value.isNullOrEmpty() && !value!!.isBlank()) {
-                            val newValue = value.toInt() as? T
+                            val newValue = value.toIntOrNull() as? T
                             if (newValue != null && pBounds.checkProperty(newValue)) {
                                 manager.setProperty(pData.apply { currentValue = newValue })
                                 view.prop_name_string.setTextColor(GREEN)
@@ -57,8 +60,8 @@ class PropertyWrapper<T : Any>(val manager: ResourceManager, var pData: Property
                 })
             }
             Double::class -> {
-                view.prop_name_string.text =
-                        viewHolder.itemView.resources.getString(R.string.settings_prop_name_pattern).format(pData.name)
+                changeTitle(viewHolder.itemView.resources.getString(R.string.settings_prop_name_pattern).format(pData.name), true)
+                view.prop_name_string.text = title
                 view.prop_name_string.setTextColor(GREEN)
                 view.prop_field_string.setText(pData.currentValue.toString())
                 view.prop_field_string.inputType = InputType.TYPE_CLASS_NUMBER
@@ -70,7 +73,7 @@ class PropertyWrapper<T : Any>(val manager: ResourceManager, var pData: Property
                     override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
                         val value = view.prop_field_string.text?.toString()
                         if (!value.isNullOrEmpty() && !value!!.isBlank()) {
-                            val newValue = value.toDouble() as? T
+                            val newValue = value.toDoubleOrNull() as? T
                             if (newValue != null && pBounds.checkProperty(newValue)) {
                                 manager.setProperty(pData.apply { currentValue = newValue })
                                 view.prop_name_string.setTextColor(GREEN)
@@ -84,8 +87,8 @@ class PropertyWrapper<T : Any>(val manager: ResourceManager, var pData: Property
                 })
             }
             Boolean::class -> {
-                view.prop_name_bool.text =
-                        viewHolder.itemView.resources.getString(R.string.settings_prop_name_pattern).format(pData.name)
+                changeTitle(viewHolder.itemView.resources.getString(R.string.settings_prop_name_pattern).format(pData.name), true)
+                view.prop_name_bool.text = title
                 view.prop_name_bool.setTextColor(GREEN)
                 view.prop_field_bool.isChecked = pData.currentValue as Boolean
                 view.prop_field_bool.setOnCheckedChangeListener { _, state ->
@@ -96,6 +99,40 @@ class PropertyWrapper<T : Any>(val manager: ResourceManager, var pData: Property
     }
 
     override fun getSpanSize(spanCount: Int, position: Int) = spanCount / SPAN_COUNT
+
+    fun changeTitle(newTitle: String, bind: Boolean = false) {
+        if (!bind)
+            title = newTitle
+        else if (!::title.isInitialized)
+            title = newTitle
+    }
+}
+
+class ExpandableSettingsHeaderItem(val title: String) : Item<ViewHolder>(), ExpandableItem {
+
+    private lateinit var expandableGroup: ExpandableGroup
+
+    override fun bind(viewHolder: ViewHolder, position: Int) {
+        viewHolder.itemView.company_title.text = title
+        viewHolder.itemView.header_icon.setImageResource(getIcon())
+
+        viewHolder.itemView.header_card.setOnClickListener {
+            expandableGroup.onToggleExpanded()
+            viewHolder.itemView.header_icon.setImageResource(getIcon())
+        }
+    }
+
+    override fun getLayout() = R.layout.settings_header
+
+    override fun setExpandableGroup(onToggleListener: ExpandableGroup) {
+        expandableGroup = onToggleListener
+    }
+
+    private fun getIcon() =
+            if (expandableGroup.isExpanded)
+                android.R.drawable.arrow_up_float
+            else
+                android.R.drawable.arrow_down_float
 }
 
 class GameSettingsActivity : AppCompatActivity() {
@@ -119,38 +156,11 @@ class GameSettingsActivity : AppCompatActivity() {
             GAME_TICTACTOE_ID -> {
                 val manager = (Games.getInstance(this).games[0] as TGame).manager
                 for ((title, section) in manager.sections)
-                    ExpandableGroup(ExpandableHeaderItem(title), false).apply {
+                    ExpandableGroup(ExpandableSettingsHeaderItem(title), false).apply {
                         add(Section(section.map { (name, res) -> PropertyWrapper(manager, PropertyData(res.first, name, title), res.second) }))
                         groupAdapter.add(this)
                     }
             }
         }
     }
-}
-
-class ExpandableHeaderItem(val title: String) : Item<ViewHolder>(), ExpandableItem {
-
-    private lateinit var expandableGroup: ExpandableGroup
-
-    override fun bind(viewHolder: ViewHolder, position: Int) {
-        viewHolder.itemView.company_title.text = title
-        viewHolder.itemView.header_icon.setImageResource(getIcon())
-
-        viewHolder.itemView.header_card.setOnClickListener {
-            expandableGroup.onToggleExpanded()
-            viewHolder.itemView.header_icon.setImageResource(getIcon())
-        }
-    }
-
-    override fun getLayout() = R.layout.settings_header
-
-    override fun setExpandableGroup(onToggleListener: ExpandableGroup) {
-        expandableGroup = onToggleListener
-    }
-
-    private fun getIcon() =
-            if (expandableGroup.isExpanded)
-                android.R.drawable.ic_delete
-            else
-                android.R.drawable.ic_input_add
 }
