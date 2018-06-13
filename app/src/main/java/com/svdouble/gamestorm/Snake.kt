@@ -3,6 +3,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color.*
 import android.graphics.Paint
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
@@ -11,7 +12,7 @@ import java.lang.Math.abs
 import java.util.*
 
 
-const val pieceSideSize: Float = 40f
+const val pieceSideSize: Float = 35f
 
 
 class Piece(x1: Float, y1: Float) {
@@ -62,7 +63,7 @@ class Snake(colorIn:Int) {
     }
 }
 
-class Draw2D(context: Context, col:Int) : View(context) {
+class Draw2D(context: Context, col:Int, mp:MediaPlayer) : View(context) {
 
 
     private val mPaint = Paint()
@@ -73,7 +74,7 @@ class Draw2D(context: Context, col:Int) : View(context) {
     private var widthPoints: Int = 0
     private var heightPoints: Int = 0
     private var k: Int = 0
-
+    private var MP = mp
     private var snake: Snake = Snake( col )
     var timer: Timer = Timer()
 
@@ -161,8 +162,9 @@ class Draw2D(context: Context, col:Int) : View(context) {
         else{
             snake.move();k = 1}
         for (i in 1..(snake.body.size - 1))
-            if (snake.body[i].x == snake.body[0].x && snake.body[i].y == snake.body[0].y)
-                timer.cancel()
+            if (snake.body[i].x == snake.body[0].x && snake.body[i].y == snake.body[0].y) {
+                timer.cancel();MP.stop()
+            }
 
         postInvalidate()
     }
@@ -180,9 +182,11 @@ open class SnakeActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val draw2D = Draw2D(this, GREEN)
-
+        val mp = MediaPlayer.create(this, R.raw.pac)
+        mp.start()
+        val draw2D = Draw2D(this, GREEN, mp)
         setContentView(draw2D)
-        draw2D.timer.schedule(TimerHandle(draw2D), 1000, 250)
+        draw2D.timer.schedule(TimerHandle(draw2D), 500, 150)
+
     }
 }
