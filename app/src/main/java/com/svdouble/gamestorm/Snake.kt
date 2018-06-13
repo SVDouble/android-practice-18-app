@@ -154,7 +154,7 @@ class Draw2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPlayer) : View
         for (el in snake.body) {
             canvas.drawCircle((el.x * pieceSideSize + (el.x + 1) * pieceSideSize) / 2, (el.y * pieceSideSize + (el.y + 1) * pieceSideSize) / 2,
                     pieceSideSize / 2, mPaint) }
-        
+
         mPaint.color = BLACK
         mPaint.style = FILL
         mPaint.isAntiAlias = true
