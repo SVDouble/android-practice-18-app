@@ -16,11 +16,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import com.bumptech.glide.Glide
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.activity_main_content.*
 
 const val DEBUG_LOG_KEY = "GameStormApp"
+const val INTENT_ID_KEY = "GAME_ID"
 
 class MainActivity : AppCompatActivity() {
 
@@ -47,12 +47,8 @@ class MainActivity : AppCompatActivity() {
         }
 
         /* Initialize dataset, Manager and Adapter */
-        val dataset = arrayOf(GameCard("hello", 5.0, R.drawable.ic_launcher_foreground),
-                GameCard("world", 5.0, R.drawable.ic_launcher_foreground),
-                GameCard("wow!", 1.0, R.drawable.ic_launcher_background),
-                GameCard("really!", 1.0, R.drawable.ic_launcher_background),
-                GameCard("mmm!", 1.0, R.drawable.ic_launcher_background),
-                GameCard("amazing!", 1.0, R.drawable.ic_launcher_background))
+        val dataset = Array(Games.getInstance(this).games.size)
+        { i -> Games.getInstance(this).games[i].generateGameCard() }
         viewManager = GridLayoutManager(this, 2)
         viewAdapter = CardAdapter(this, dataset)
         viewAdapter.notifyDataSetChanged()
@@ -66,33 +62,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         /* Init header background */
-        Glide.with(this).load(R.drawable.ic_launcher_background).into(backdrop)
+        //Glide.with(this).load(R.drawable.ic_launcher_background).into(backdrop)
+        Picasso.get().load(R.drawable.sun).into(backdrop)
 
-    }
-
-    inner class GridSpacingItemDecoration(private val spanCount: Int, private val spacing: Int, private val includeEdge: Boolean) :
-            RecyclerView.ItemDecoration() {
-
-        override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-            val position = parent.getChildAdapterPosition(view) // item position
-            val column = position % spanCount // item column
-
-            if (includeEdge) {
-                outRect.left = spacing - column * spacing / spanCount // spacing - column * ((1f / spanCount) * spacing)
-                outRect.right = (column + 1) * spacing / spanCount // (column + 1) * ((1f / spanCount) * spacing)
-
-                if (position < spanCount) { // top edge
-                    outRect.top = spacing
-                }
-                outRect.bottom = spacing // item bottom
-            } else {
-                outRect.left = column * spacing / spanCount // column * ((1f / spanCount) * spacing)
-                outRect.right = spacing - (column + 1) * spacing / spanCount // spacing - (column + 1) * ((1f /    spanCount) * spacing)
-                if (position >= spanCount) {
-                    outRect.top = spacing // item top
-                }
-            }
-        }
     }
 
     private fun dpToPx(dp: Int) =
@@ -101,7 +73,7 @@ class MainActivity : AppCompatActivity() {
 }
 
 
-data class GameCard(val title: String, val rating: Double, val thumbnail: Int)
+data class GameCard(val gameId: Int, val title: String, val rating: Double, val thumbnail: Int)
 
 /* Custom adapter for the RecyclerView */
 class CardAdapter(private val mContext: Context, private val dataset: Array<GameCard>) :
@@ -109,7 +81,7 @@ class CardAdapter(private val mContext: Context, private val dataset: Array<Game
 
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         //val cardView = v.findViewById<CardView>(R.id.card_view)!!
-        val titleView = v.findViewById<TextView>(R.id.title)!!
+        val titleView = v.findViewById<TextView>(R.id.textViewTitle)!!
         val ratingView = v.findViewById<TextView>(R.id.rating)!!
         val thumbnailView = v.findViewById<ImageView>(R.id.thumbnail)!!
         val overflowView = v.findViewById<ImageView>(R.id.overflow)!!
@@ -126,9 +98,10 @@ class CardAdapter(private val mContext: Context, private val dataset: Array<Game
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.titleView.text = dataset[position].title
         holder.ratingView.text = mContext.getString(R.string.rating_pattern).format(dataset[position].rating)
-        Glide.with(mContext).load(dataset[position].thumbnail).into(holder.thumbnailView)
+        //Glide.with(mContext).load(dataset[position].thumbnail).into(holder.thumbnailView)
+        Picasso.get().load(dataset[position].thumbnail).into(holder.thumbnailView)
         holder.overflowView.setOnClickListener { showPopupMenu(holder.overflowView) }
-        holder.thumbnailView.setOnClickListener { mContext.startActivity(Intent(mContext, GameMenuActivity::class.java)) }
+        holder.thumbnailView.setOnClickListener { mContext.startActivity(Intent(mContext, GameMenuActivity::class.java).putExtra(INTENT_ID_KEY, dataset[position].gameId)) }
     }
 
     private fun showPopupMenu(view: View) {
@@ -136,7 +109,7 @@ class CardAdapter(private val mContext: Context, private val dataset: Array<Game
         val inflater = popup.menuInflater
         inflater.inflate(R.menu.menu_card, popup.menu)
         popup.setOnMenuItemClickListener {
-            when(it.itemId) {
+            when (it.itemId) {
                 R.id.action_add_favourite -> Log.d(DEBUG_LOG_KEY, "Wow!")
                 R.id.action_rate -> Log.d(DEBUG_LOG_KEY, "Oops!")
                 else -> return@setOnMenuItemClickListener false
@@ -147,5 +120,30 @@ class CardAdapter(private val mContext: Context, private val dataset: Array<Game
     }
 
     override fun getItemCount() = dataset.size
+}
+
+class GridSpacingItemDecoration(private val spanCount: Int, private val spacing: Int, private val includeEdge: Boolean) :
+        RecyclerView.ItemDecoration() {
+
+    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+        val position = parent.getChildAdapterPosition(view) // item position
+        val column = position % spanCount // item column
+
+        if (includeEdge) {
+            outRect.left = spacing - column * spacing / spanCount // spacing - column * ((1f / spanCount) * spacing)
+            outRect.right = (column + 1) * spacing / spanCount // (column + 1) * ((1f / spanCount) * spacing)
+
+            if (position < spanCount) { // top edge
+                outRect.top = spacing
+            }
+            outRect.bottom = spacing // item bottom
+        } else {
+            outRect.left = column * spacing / spanCount // column * ((1f / spanCount) * spacing)
+            outRect.right = spacing - (column + 1) * spacing / spanCount // spacing - (column + 1) * ((1f /    spanCount) * spacing)
+            if (position >= spanCount) {
+                outRect.top = spacing // item top
+            }
+        }
+    }
 }
 

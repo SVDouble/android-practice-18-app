@@ -1,118 +1,166 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    android:id="@+id/activity_game_menu"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".GameMenuActivity">
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/cardViewHeader"
+    <TextView
+        android:id="@+id/gm.title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:textAlignment="center"
+        android:textSize="36sp"/>
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="center" />
-    </android.support.v7.widget.CardView>
-
-    <TextView
-        android:id="@+id/description"
+    <RelativeLayout
+        android:id="@+id/gm.header"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:padding="4dp"
         android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/guideline"
+        app:layout_constraintBottom_toTopOf="@+id/gm.guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardViewHeader" />
+        app:layout_constraintTop_toBottomOf="@id/gm.title">
+
+        <View
+            android:id="@+id/gm.delimiter_top"
+            android:layout_height="2dp"
+            android:layout_width="match_parent"
+            android:layout_marginStart="60dp"
+            android:layout_marginEnd="60dp"
+            android:background="@android:color/darker_gray"
+            android:layout_alignParentTop="true"/>
+
+        <RelativeLayout
+            android:id="@+id/gm.content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/gm.delimiter_top">
+
+            <TextView
+                android:id="@+id/gm.header.title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_alignParentStart="true"
+                android:layout_toStartOf="@id/gm.header.button_add"
+                android:textSize="24sp"
+                android:text="@string/pa_title"/>
+
+            <ImageButton
+                android:id="@+id/gm.header.button_add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:foregroundGravity="right|center_vertical"
+                android:src="@android:drawable/ic_input_add"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"/>
+        </RelativeLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/user_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/gm.content"
+            android:layout_above="@id/gm.delimiter_bottom"
+            android:clipToPadding="true"
+            android:scrollbars="vertical" />
+
+        <View
+            android:id="@+id/gm.delimiter_bottom"
+            android:layout_height="2dp"
+            android:layout_width="match_parent"
+            android:layout_marginStart="60dp"
+            android:layout_marginEnd="60dp"
+            android:background="@android:color/darker_gray"
+            android:layout_alignParentBottom="true"/>
+    </RelativeLayout>
 
     <android.support.constraint.Guideline
-        android:id="@+id/guideline"
+        android:id="@+id/gm.guideline"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.5" />
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/cardViewPanel"
+    <TableLayout
+        android:id="@+id/tableLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/guideline">
+        app:layout_constraintTop_toBottomOf="@id/gm.guideline">
 
-        <TableLayout
-            android:id="@+id/tableLayout"
+        <TableRow
+            android:id="@+id/gm.buttons.tableRow1"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_weight="1">
 
-            <TableRow
-                android:id="@+id/tableRow1"
-                android:layout_width="match_parent"
+            <ImageButton
+                android:id="@+id/gm.buttons.play"
+                android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1">
+                android:layout_weight="1"
+                style="@style/AppTheme.MenuButton"
+                android:text="@string/gi_button_play"
+                android:contentDescription="@string/gi_button_play" />
 
-                <Button
-                    android:id="@+id/buttonPlay"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:text="@string/gi_button_play" />
+            <ImageButton
+                android:id="@+id/gm.buttons.settings"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                style="@style/AppTheme.MenuButton"
+                android:text="@string/gi_button_settings"
+                android:contentDescription="@string/gi_button_settings" />
+        </TableRow>
 
-                <Button
-                    android:id="@+id/buttonSettings"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:text="@string/gi_button_settings" />
-            </TableRow>
+        <TableRow
+            android:id="@+id/gm.buttons.tableRow2"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1">
 
-            <TableRow
-                android:id="@+id/tableRow2"
-                android:layout_width="wrap_content"
-                android:layout_height="0dp"
-                android:layout_weight="1">
+            <ImageButton
+                android:id="@+id/gm.buttons.wiki"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                style="@style/AppTheme.MenuButton"
+                android:text="@string/gi_button_wiki"
+                android:contentDescription="@string/gi_button_wiki" />
 
-                <Button
-                    android:id="@+id/buttonWiki"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:text="@string/gi_button_wiki" />
+            <ImageButton
+                android:id="@+id/gm.buttons.scoreboard"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                style="@style/AppTheme.MenuButton"
+                android:text="@string/gi_button_scoreboard"
+                android:contentDescription="@string/gi_button_scoreboard"/>
+        </TableRow>
 
-                <Button
-                    android:id="@+id/buttonScoreboard"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:text="@string/gi_button_scoreboard" />
-            </TableRow>
+        <TableRow
+            android:id="@+id/gm.buttons.tableRow3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-            <TableRow
-                android:id="@+id/tableRow3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <Button
-                    android:id="@+id/buttonBack"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="@string/gi_button_back"
-                    android:layout_marginTop="8dp" />
-            </TableRow>
-        </TableLayout>
-    </android.support.v7.widget.CardView>
+            <Button
+                android:id="@+id/gm.buttons.back"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/gi_button_back"
+                android:layout_marginTop="8dp" />
+        </TableRow>
+    </TableLayout>
 </android.support.constraint.ConstraintLayout>

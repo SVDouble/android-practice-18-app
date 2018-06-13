@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:foreground="?android:attr/selectableItemBackground"
+    android:clickable="true"
+    android:focusable="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:layout_marginBottom="4dp">
+
+
+        <TextView
+            android:id="@+id/prop_name_string"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:textAlignment="viewStart"
+            android:textAppearance="@style/Base.TextAppearance.AppCompat.Large"
+            android:textSize="24sp" />
+
+        <EditText
+            android:id="@+id/prop_field_string"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:hint="@string/recycler_item_hint"
+            android:layout_toEndOf="@id/prop_name_string"
+            android:inputType="numberDecimal"
+            android:textAlignment="viewStart" />
+    </RelativeLayout>
+</android.support.v7.widget.CardView>

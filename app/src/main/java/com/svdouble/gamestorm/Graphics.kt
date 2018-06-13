@@ -2,7 +2,7 @@ package com.svdouble.gamestorm
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
+import android.graphics.Color.*
 import android.graphics.Paint
 import android.view.MotionEvent
 import android.view.View
@@ -12,10 +12,10 @@ const val bottomMargin: Float = 3f / 4
 /* Handle calls */
 sealed class BaseCall
 
-data class CallDrawBg(val color: Int) : BaseCall()
-data class CallDrawGrid(val rows: Int, val columns: Int) : BaseCall()
-data class CallDrawChip(val point: Cell2D, val chipId: Int) : BaseCall()
-data class CallDrawGridCells(val points: Array<Cell2D>, val color: Int) : BaseCall()
+data class CallDrawBg(val color: Int = WHITE) : BaseCall()
+data class CallDrawGrid(val rows: Int, val columns: Int, val color: Int = BLACK) : BaseCall()
+data class CallDrawChip(val point: Cell2D, val chipId: Int, val color: Int = BLUE) : BaseCall()
+data class CallDrawGridCells(val points: Array<Cell2D>, val color: Int = GREEN) : BaseCall()
 
 class CellularDrawEngine2D(context: Context) : View(context) {
 
@@ -33,11 +33,11 @@ class CellularDrawEngine2D(context: Context) : View(context) {
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
         if (event.action == MotionEvent.ACTION_DOWN) {
-            val x = (event.x / squareSide).toInt() + 1
-            val y = (event.y / squareSide).toInt() + 1
+            val x = (event.x / squareSide).toInt()
+            val y = (event.y / squareSide).toInt()
 
-            if (x <= rows && y <= columns)
-                gameHandler.dispatchEvent(GameEvent(GameEvent.EventType.STEP, Cell2D(x, y)))
+            if (x < columns && y < rows)
+                gameHandler.dispatchEvent(GameEvent(GameEvent.Type.STEP, Cell2D(x, y)))
             this.invalidate()
         }
         return super.onTouchEvent(event)
@@ -55,24 +55,26 @@ class CellularDrawEngine2D(context: Context) : View(context) {
     }
 
     private fun drawGrid(call: CallDrawGrid, canvas: Canvas) {
-        var squareSide: Int = width / call.columns
-        val lastLineY = 1f * call.rows * squareSide
-
-        if (width > (height * bottomMargin))
-            squareSide = (height * bottomMargin / rows).toInt()
+        rows = call.rows
+        columns = call.columns
+        val squareSide: Int =
+                if (width / columns * rows > height * bottomMargin)
+                    (height * bottomMargin / rows).toInt()
+                else
+                    width / columns
 
         this.squareSide = squareSide
-        rows = call.rows
-        columns = call.rows
 
-        mPaint.strokeWidth = 7F
-        mPaint.color = Color.RED
+        mPaint.strokeWidth = 14F
+        mPaint.color = call.color
 
-        for (ii in 0..call.rows) {
-            canvas.drawLine(0f, (ii * squareSide).toFloat(), width.toFloat(), (ii * squareSide).toFloat(), mPaint)
+        val endX = if (columns * squareSide > width) 1f * width else 1f * columns * squareSide
+        val endY = if (rows * squareSide > height * bottomMargin) height * bottomMargin else 1f * rows * squareSide
+        for (ii in 0..rows) {
+            canvas.drawLine(0f, (ii * squareSide).toFloat(), endX, (ii * squareSide).toFloat(), mPaint)
         }
-        for (ii in 0..call.columns) {
-            canvas.drawLine((ii * squareSide).toFloat(), 0f, (ii * squareSide).toFloat(), lastLineY, mPaint)
+        for (ii in 0..columns) {
+            canvas.drawLine((ii * squareSide).toFloat(), 0f, (ii * squareSide).toFloat(), endY, mPaint)
         }
     }
 
@@ -83,8 +85,10 @@ class CellularDrawEngine2D(context: Context) : View(context) {
                 val yyy = (call.point.y * 1f * squareSide - 1)
                 val arg11: Float = xxx - (xxx % squareSide) + squareSide / 2
                 val arg22: Float = yyy + squareSide / 2 - (yyy % squareSide)
-                mPaint.color = Color.BLACK
-                mPaint.strokeWidth = 7F
+                mPaint.isAntiAlias = true
+                mPaint.color = call.color
+                mPaint.style = Paint.Style.STROKE
+                mPaint.strokeWidth = 15F
                 canvas.drawLine(arg11 - (squareSide / 2 - 5f), arg22 - (squareSide / 2 - 5f), arg11 + (squareSide / 2 - 5f), arg22 + (squareSide / 2 - 5f), mPaint)
                 canvas.drawLine(arg11 + (squareSide / 2 - 5f), arg22 - (squareSide / 2 - 5f), arg11 - (squareSide / 2 - 5f), arg22 + (squareSide / 2 - 5f), mPaint)
             }
@@ -96,9 +100,9 @@ class CellularDrawEngine2D(context: Context) : View(context) {
                 val arg22: Float = yyy + squareSide / 2 - (yyy % squareSide)
 
                 mPaint.isAntiAlias = true
-                mPaint.color = Color.GREEN // установим зеленый цвет
+                mPaint.color = call.color
                 mPaint.style = Paint.Style.STROKE
-                mPaint.strokeWidth = 6F
+                mPaint.strokeWidth = 15F
                 canvas.drawCircle(arg11, arg22, squareSide / 2 - 4f, mPaint)
 
             }
@@ -107,7 +111,10 @@ class CellularDrawEngine2D(context: Context) : View(context) {
     }
 
     private fun fillGridCells(call: CallDrawGridCells, canvas: Canvas) {
+        mPaint.isAntiAlias = true
         mPaint.color = call.color
+        mPaint.style = Paint.Style.STROKE
+        mPaint.strokeWidth = 15F
         call.points.forEach {
             val xxx = ((it.x - 1f) * squareSide)
             val yyy = ((it.y - 1f) * squareSide)
@@ -121,8 +128,7 @@ class CellularDrawEngine2D(context: Context) : View(context) {
         storage.drawCalls.add(call)
     }
 
-    inner class DrawStorage {
-
+    private inner class DrawStorage {
         val drawCalls: ArrayList<BaseCall> = arrayListOf()
         fun drawFromStorage(canvas: Canvas) {
             for (call in drawCalls)
