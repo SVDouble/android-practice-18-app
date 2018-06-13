@@ -1,8 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CanvasActivity">
+    tools:context=".CanvasActivity"
+    android:orientation="vertical">
 
-</RelativeLayout>
+    <!--<View-->
+        <!--android:id="@+id/t_view"-->
+        <!--android:layout_width="200dp"-->
+        <!--android:layout_height="200dp"/>-->
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Hello!"
+        android:textSize="50sp"/>
+
+
+    <!--<View-->
+        <!--android:id="@+id/test_v"-->
+        <!--android:layout_width="200dp"-->
+        <!--android:layout_height="200dp" />-->
+
+    <LinearLayout
+        android:id="@+id/lin"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"/>
+
+</LinearLayout>
