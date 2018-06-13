@@ -18,10 +18,10 @@
         android:textSize="50sp"/>
 
 
-    <!--<View-->
-        <!--android:id="@+id/test_v"-->
-        <!--android:layout_width="200dp"-->
-        <!--android:layout_height="200dp" />-->
+    <ViewStub
+        android:id="@+id/test_v"
+        android:layout_width="200dp"
+        android:layout_height="200dp" />
 
     <LinearLayout
         android:id="@+id/lin"

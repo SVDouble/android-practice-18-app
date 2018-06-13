@@ -17,13 +17,10 @@ data class Cell2D(val x: Int, val y: Int) {
 
 open class BasePlayer(open var id: String, open var iconId: Int) {
     companion object {
-        private fun ClosedRange<Char>.randomString(lenght: Int) =
-                (1..lenght)
-                        .map { (Random().nextInt(endInclusive.toInt() - start.toInt()) + start.toInt()).toChar() }
-                        .joinToString("")
+        private const val source = "abcdefghijklmnopqrstuvwxyz0123456789"
         fun generatePlayerId() : String =
-                ('a'..'z').randomString(6)
-
+                (1..6).map { source[Random().nextInt(source.length)] }
+                        .joinToString("")
     }
 }
 
@@ -79,7 +76,7 @@ class ResourceManager {
     fun <T : Any> attachProperty(pData: PropertyData<T>, pBounds: PropertyBounds<T> = PropertyBounds()) {
         val section = sections[pData.section]
         if (section != null && section.containsKey(pData.name))
-            throw IllegalArgumentException("Property already exists!")
+            throw IllegalArgumentException("Property $pData already exists!")
         if (!pBounds.checkProperty(pData.currentValue))
             throw IllegalArgumentException("Illegal default value!")
         if (section != null)
