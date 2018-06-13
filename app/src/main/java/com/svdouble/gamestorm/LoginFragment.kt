@@ -47,9 +47,11 @@ class LoginFragment : Fragment() {
         }
         lf_footer_apply.setOnClickListener {
             val name = lf_content_nick_field.text
-            if (!name.isNullOrEmpty())
+            if (!name.isNullOrEmpty()) {
                 listener?.onNewPlayer(TPlayer(BasePlayer.generatePlayerId(),
                         -1, temp++ % 2), name.toString())
+                activity?.supportFragmentManager?.beginTransaction()?.remove(this)?.commit()
+            }
         }
         /*
         view?.isFocusableInTouchMode = true

@@ -181,14 +181,23 @@ class TimerHandle(view1: Draw2D) : TimerTask() {
 
 class SnakeActivity: AppCompatActivity() {
 
+    private lateinit var mp1: MediaPlayer
+    private lateinit var mp2: MediaPlayer
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val mp1 = MediaPlayer.create(this, R.raw.pac)
-        val mp2 = MediaPlayer.create(this, R.raw.hell)
+        mp1 = MediaPlayer.create(this, R.raw.pac)
+        mp2 = MediaPlayer.create(this, R.raw.hell)
         mp1.start()
         val draw2D = Draw2D(this, GREEN, mp1, mp2)
         setContentView(draw2D)
         draw2D.timer.schedule(TimerHandle(draw2D), 500, 150)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        mp1.stop()
+        mp2.stop()
     }
 }
 
