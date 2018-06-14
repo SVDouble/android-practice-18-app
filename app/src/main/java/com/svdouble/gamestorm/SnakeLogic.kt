@@ -17,18 +17,21 @@ class SGame(private val context: Context)
 
     val manager = ResourceManager()
 
-    private val speed by bindResource(this, 100, "Speed", "Base", { it in 50..1000 })
+    private val speed by bindResource(this, 100, "Speed", "Base", { it in 100..1000 })
     private val color by bindResource(this, "green", "Color", "Base",
             { it.toLowerCase() in arrayOf("green", "blue")})
-
+    private val size by bindResource(this, 10, "size", "Base", { it in 1..50 })
+    private val colap by bindResource(this, 1, "number of apples", "Base", { it in 1..10 })
     override fun startGame() {
-        manager.lockProperties()
+        //manager.lockProperties()
+        mp1 = MediaPlayer.create(context, R.raw.pac)
+        mp2 = MediaPlayer.create(context, R.raw.hell)
         val clr = when(color) {
             "green" -> GREEN
             "blue" -> BLUE
             else -> GREEN
         }
-        drawEngine = SnakeDrawEngine2D(context, clr, mp1, mp2)
+        drawEngine = SnakeDrawEngine2D(context, clr, mp1, mp2, size.toFloat(), colap)
         mp1.start()
         drawEngine.timer.schedule(TimerHandle(drawEngine), 500, speed.toLong())
     }
@@ -38,8 +41,6 @@ class SGame(private val context: Context)
 
     override fun getResourceManager() = manager
     override fun onPropertiesLock() {
-        mp1 = MediaPlayer.create(context, R.raw.pac)
-        mp2 = MediaPlayer.create(context, R.raw.hell)
     }
 
     fun stopGame() {
