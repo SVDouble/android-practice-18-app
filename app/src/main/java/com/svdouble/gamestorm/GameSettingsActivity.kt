@@ -32,6 +32,33 @@ class PropertyWrapper<T : Any>(val manager: ResourceManager, var pData: Property
     override fun bind(viewHolder: ViewHolder, position: Int) {
         val view = viewHolder.itemView
         when (pData.currentValue::class) {
+            String::class -> {
+                changeTitle(viewHolder.itemView.resources.getString(R.string.settings_prop_name_pattern).format(pData.name), true)
+                view.prop_name_string.text = title
+                view.prop_name_string.setTextColor(GREEN)
+                view.prop_field_string.setText(pData.currentValue.toString())
+                view.prop_field_string.inputType = InputType.TYPE_CLASS_TEXT
+                view.prop_field_string.addTextChangedListener(object : TextWatcher {
+                    override fun afterTextChanged(p0: Editable?) {}
+
+                    override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+
+                    override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                        val value = view.prop_field_string.text?.toString()
+                        if (!value.isNullOrEmpty() && !value!!.isBlank()) {
+                            val newValue = value as? T
+                            if (newValue != null && pBounds.checkProperty(newValue)) {
+                                manager.setProperty(pData.apply { currentValue = newValue })
+                                view.prop_name_string.setTextColor(GREEN)
+                            }
+                            else
+                                view.prop_name_string.setTextColor(RED)
+                        }
+                        else
+                            view.prop_name_string.setTextColor(RED)
+                    }
+                })
+            }
             Int::class -> {
                 changeTitle(viewHolder.itemView.resources.getString(R.string.settings_prop_name_pattern).format(pData.name), true)
                 view.prop_name_string.text = title
@@ -155,6 +182,14 @@ class GameSettingsActivity : AppCompatActivity() {
         when (intent.getIntExtra(INTENT_ID_KEY, -1)) {
             GAME_TICTACTOE_ID -> {
                 val manager = (Games.getInstance(this).games[0] as TGame).manager
+                for ((title, section) in manager.sections)
+                    ExpandableGroup(ExpandableSettingsHeaderItem(title), false).apply {
+                        add(Section(section.map { (name, res) -> PropertyWrapper(manager, PropertyData(res.first, name, title), res.second) }))
+                        groupAdapter.add(this)
+                    }
+            }
+            GAME_SNAKE_ID -> {
+                val manager = (Games.getInstance(this).games[1] as SGame).manager
                 for ((title, section) in manager.sections)
                     ExpandableGroup(ExpandableSettingsHeaderItem(title), false).apply {
                         add(Section(section.map { (name, res) -> PropertyWrapper(manager, PropertyData(res.first, name, title), res.second) }))
