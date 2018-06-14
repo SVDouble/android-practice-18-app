@@ -63,27 +63,23 @@ class Snake(colorIn:Int, size:Float) {
     }
 }
 
-class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPlayer, size:Float, val apple_amount: Int) : View(context) {
+class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPlayer, size:Float, private val apple_amount: Int) : View(context) {
 
     private val mPaint = Paint()
     private var xPath: Float = 0.0f
     private var yPath: Float = 0.0f
     private var e1: Float = 0.0f
     private var e2: Float = 0.0f
-    private var e3: Float = 0.0f
-    private var e4: Float = 0.0f
     private var widthPoints: Int = 0
     private var heightPoints: Int = 0
     private var k: Int = 0
     private var l:Int = 0
-    private var nm: Int = 0
     private var etapl:Int = -1
     private var MP1 = mp1
     private var MP2: MediaPlayer = mp2
     private var snake: Snake = Snake( col, size )
     var timer: Timer = Timer()
 
-    private var apple1: Piece = Piece(0f, 0f)
     private var apples: MutableList<Piece> = arrayListOf()
 
 
@@ -95,12 +91,9 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
     }
 
     private fun makeNewApple() {
-
         do {
             e1 = abs(Random().nextInt() % widthPoints).toFloat()
             e2 = abs(Random().nextInt() % ((heightPoints * freeplace).toInt()) ).toFloat()
-
-
         } while (checkBody(e1, e2))
         apples.add(Piece(e1, e2))
     }
@@ -173,13 +166,8 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
             canvas.drawCircle((el.x * pieceSideSize + (el.x + 1) * pieceSideSize)/2, (el.y * pieceSideSize+(el.y + 1) * pieceSideSize)/2,
                     pieceSideSize/2, mPaint)
         }
-//        for (el in snake.body) {
-//            canvas.drawCircle((el.x * pieceSideSize + (el.x + 1) * pieceSideSize)/2, (el.y * pieceSideSize+(el.y + 1) * pieceSideSize)/2,
-//                    pieceSideSize/2, mPaint)
-//        }
 
-
-        if(MP2.currentPosition/1000 % 2 == 0) {
+        if(MP2.currentPosition/500 % 2 == 0) {
             mPaint.isAntiAlias = true
             mPaint.color = RED
             mPaint.textSize = 35.0f

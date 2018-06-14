@@ -17,7 +17,7 @@ class SGame(private val context: Context)
 
     val manager = ResourceManager()
 
-    private val speed by bindResource(this, 100, "Speed", "Base", { it in 100..1000 })
+    private val speed by bindResource(this, 125, "Speed", "Base", { it in 100..1000 })
     private val color by bindResource(this, "green", "Color", "Base",
             { it.toLowerCase() in arrayOf("green", "blue")})
     private val size by bindResource(this, 10, "size", "Base", { it in 1..50 })
