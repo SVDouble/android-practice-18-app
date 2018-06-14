@@ -135,7 +135,7 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
     override fun onDraw(canvas: Canvas) {
 
         super.onDraw(canvas)
-        if(MP2.duration / 1000 == MP2.currentPosition/1000) {
+        if(MP2.currentPosition/10 == 1050) {
             MP2.seekTo(1)
         }
         if(MP1.duration / 1000 == MP1.currentPosition/1000) {
@@ -167,7 +167,7 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
                     pieceSideSize/2, mPaint)
         }
 
-        if(MP2.currentPosition/500 % 2 == 0) {
+        if(MP2.currentPosition/750 % 2 == 0) {
             mPaint.isAntiAlias = true
             mPaint.color = RED
             mPaint.textSize = 35.0f
@@ -195,8 +195,8 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
 
         if(l == 1) {
                canvas.drawText(
-                    "$etapl",
-                    (snake.fieldWidth / 2f) - 15f,
+                    "your score:$etapl",
+                    (snake.fieldWidth / 2f) - 105f,
                     snake.fieldHeight / 2f ,
                     mPaint
             )
