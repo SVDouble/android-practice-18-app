@@ -28,9 +28,21 @@ class Snake(colorIn:Int, size:Float) {
 
     var fieldWidth: Float = 0f
     var fieldHeight: Float = 0f
-    private var SIZE :Float = size
 
-    private fun makeHead() {
+    private var SIZE :Float = size
+    private var tailisnear:Int = 0
+
+    fun makeHead() {
+        if((body[0].x + deltaX == body.lastElement().x && body[0].y + deltaY == body.lastElement().y) ||
+                ((body[0].x + deltaX) * pieceSideSize >= fieldWidth - (fieldWidth % pieceSideSize) && body.lastElement().x == 0f) ||
+                (body[0].x + deltaX < 0f && body.lastElement().x == ((fieldWidth - (fieldWidth % pieceSideSize)) / pieceSideSize) - 1f)||
+                ((body[0].y + deltaY) * pieceSideSize >= fieldHeight - (fieldHeight % pieceSideSize) && body.lastElement().y == 0f)||
+                (body[0].y + deltaY < 0f && body.lastElement().y == ((fieldHeight - (fieldHeight % pieceSideSize)) / pieceSideSize) - 1f))
+        {
+            body.removeElement(body.lastElement()); tailisnear = 1
+        }
+        else tailisnear = 0
+
         var newX = body[0].x + deltaX
         var newY = body[0].y + deltaY
         if (newX * pieceSideSize >= fieldWidth - (fieldWidth % pieceSideSize))
@@ -42,6 +54,7 @@ class Snake(colorIn:Int, size:Float) {
             newY = 0f
         if (newY < 0f)
             newY = ((fieldHeight - (fieldHeight % pieceSideSize)) / pieceSideSize) - 1f
+
 
         body.insertElementAt(Piece(newX, newY), 0)
     }
@@ -59,7 +72,8 @@ class Snake(colorIn:Int, size:Float) {
 
     fun move() {
         makeHead()
-        body.removeElement(body.lastElement())
+        if(tailisnear != 1){
+          body.removeElement(body.lastElement()); tailisnear = 0}
     }
 }
 
@@ -70,20 +84,16 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
     private var yPath: Float = 0.0f
     private var e1: Float = 0.0f
     private var e2: Float = 0.0f
-    private var e3: Float = 0.0f
-    private var e4: Float = 0.0f
     private var widthPoints: Int = 0
     private var heightPoints: Int = 0
     private var k: Int = 0
     private var l:Int = 0
-    private var nm: Int = 0
     private var etapl:Int = -1
     private var MP1 = mp1
     private var MP2: MediaPlayer = mp2
     private var snake: Snake = Snake( col, size )
     var timer: Timer = Timer()
 
-    private var apple1: Piece = Piece(0f, 0f)
     private var apples: MutableList<Piece> = arrayListOf()
 
 
@@ -163,7 +173,7 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
         for (apple in apples)
             canvas.drawCircle((apple.x * pieceSideSize + (apple.x + 1) * pieceSideSize) / 2, (apple.y * pieceSideSize + (apple.y + 1) * pieceSideSize) / 2,
                     pieceSideSize / 2, mPaint)
-        //mPaint.color = snake.color
+
         for (el_i in 0 until snake.body.size) {
             if (el_i == 0)
                 mPaint.color = BLACK
@@ -173,10 +183,6 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
             canvas.drawCircle((el.x * pieceSideSize + (el.x + 1) * pieceSideSize)/2, (el.y * pieceSideSize+(el.y + 1) * pieceSideSize)/2,
                     pieceSideSize/2, mPaint)
         }
-//        for (el in snake.body) {
-//            canvas.drawCircle((el.x * pieceSideSize + (el.x + 1) * pieceSideSize)/2, (el.y * pieceSideSize+(el.y + 1) * pieceSideSize)/2,
-//                    pieceSideSize/2, mPaint)
-//        }
 
 
         if(MP2.currentPosition/1000 % 2 == 0) {
