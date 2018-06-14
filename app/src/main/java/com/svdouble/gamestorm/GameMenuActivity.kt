@@ -1,6 +1,5 @@
 package com.svdouble.gamestorm
 
-import android.arch.lifecycle.LiveData
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -10,16 +9,19 @@ import android.util.Log
 import com.xwray.groupie.*
 import kotlinx.android.synthetic.main.activity_game_menu.*
 import kotlinx.android.synthetic.main.authorization_rv_item.view.*
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 
 private const val TEMP_SECTION = "~game_menu_temp"
 
-class ExpandableMenuHeaderItem(val player: TPlayer) : Item<ViewHolder>(), ExpandableItem {
+class ExpandableMenuHeaderItem(val player: TPlayer, val name: String) : Item<ViewHolder>(), ExpandableItem {
 
     private lateinit var expandableGroup: ExpandableGroup
 
     override fun bind(viewHolder: ViewHolder, position: Int) {
         //viewHolder.itemView.pa_item_player_icon.setImageResource(player.iconId)
-        viewHolder.itemView.pa_item_player_name.text = player.id
+
+        viewHolder.itemView.pa_item_player_name.text = name
 
         viewHolder.itemView.pa_item_player_name.setOnClickListener {
             expandableGroup.onToggleExpanded()
@@ -42,14 +44,13 @@ class ExpandableMenuHeaderItem(val player: TPlayer) : Item<ViewHolder>(), Expand
 
 class GameMenuActivity : AppCompatActivity(), LoginFragment.OnLoginFragmentInteractionListener {
 
-    private var userDb: UserDataBase? = null
-    private lateinit var mDbWorkerThread: DbWorkerThread
+//    private lateinit var userDb: UserDataBase
+//    private lateinit var mDbWorkerThread: DbWorkerThread
+//    private val mUiHandler = Handler()
     private lateinit var playerManager: ResourceManager
     private lateinit var groupAdapter: GroupAdapter<ViewHolder>
-
-    private val mUiHandler = Handler()
-
-    private lateinit var globalUsers: LiveData<List<UserData>>
+    private lateinit var globalUsers: List<UserData>
+    private val localPlayers = mutableListOf<TPlayer>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,15 +58,15 @@ class GameMenuActivity : AppCompatActivity(), LoginFragment.OnLoginFragmentInter
 
         /* Database */
 
-        mDbWorkerThread = DbWorkerThread("dbWorkerThread")
-        mDbWorkerThread.start()
-        userDb = UserDataBase.getInstance(this)
-        fetchUserDataFromDb() // load all users
-        if (::globalUsers.isInitialized) {
-            Log.d(TAG, "Wow!")
-            for (user in globalUsers.value!!)
-                Log.d(TAG, user.toString())
-        }
+//        mDbWorkerThread = DbWorkerThread("dbWorkerThread")
+//        mDbWorkerThread.start()
+//        userDb = UserDataBase.getInstance(this)
+//        fetchUserDataFromDb() // load all users
+//        if (::globalUsers.isInitialized) {
+//            Log.d(TAG, "Wow!")
+//            for (user in globalUsers.value!!)
+//                Log.d(TAG, user.toString())
+//        }
 
 
         /* Recycler view */
@@ -93,14 +94,14 @@ class GameMenuActivity : AppCompatActivity(), LoginFragment.OnLoginFragmentInter
                 playerManager = (Games.getInstance(this).games[0] as TGame).playerManager
                 val players = playerManager.getProperty(PropertyData(arrayListOf<TPlayer>(), "players", "game_menu"))
 
-                for (player in players) {
-                    val pData = PropertyData(player.chipId, "~${player.id}", TEMP_SECTION)
-                    playerManager.attachProperty(pData)
-                    ExpandableGroup(ExpandableMenuHeaderItem(player), false).apply {
-                        add(Section(PropertyWrapper(playerManager, pData).apply { changeTitle("IconId: ") }))
-                        groupAdapter.add(this)
-                    }
-                }
+//                for (player in players) {
+//                    val pData = PropertyData(player.chipId, "~${player.id}", TEMP_SECTION)
+//                    playerManager.attachProperty(pData)
+//                    ExpandableGroup(ExpandableMenuHeaderItem(player), false).apply {
+//                        add(Section(PropertyWrapper(playerManager, pData).apply { changeTitle("IconId: ") }))
+//                        groupAdapter.add(this)
+//                    }
+//                }
             }
             GAME_SNAKE_ID -> {
                 val sGame = Games.getInstance(this).games[1] as SGame
@@ -110,6 +111,7 @@ class GameMenuActivity : AppCompatActivity(), LoginFragment.OnLoginFragmentInter
             }
         }
         gm_buttons_back.setOnClickListener { startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)) }
+        updatePlayers()
     }
 
     override fun onNewPlayer(newPlayer: BasePlayer, name: String) {
@@ -117,50 +119,71 @@ class GameMenuActivity : AppCompatActivity(), LoginFragment.OnLoginFragmentInter
         val pData = PropertyData(player.chipId, "~${player.id}", TEMP_SECTION)
         playerManager.getProperty(PropertyData(arrayListOf<TPlayer>(), "players", "game_menu")).add(player)
         playerManager.attachProperty(pData)
-        ExpandableGroup(ExpandableMenuHeaderItem(player), false).apply {
+        ExpandableGroup(ExpandableMenuHeaderItem(player, name), false).apply {
             add(Section(PropertyWrapper(playerManager, pData).apply { changeTitle("IconId: ") }))
             groupAdapter.add(this)
         }
-        insertUserDataInDb(UserData(player.id, name, player.iconId, player.chipId))
+
+        insertUser(UserData(BasePlayer.generatePlayerId(), name, -1, -1))
+        updatePlayers()
+        for (user in globalUsers)
+            Log.d(TAG, user.name)
     }
 
-    private fun fetchUserDataFromDb() {
-        val task = Runnable {
-            val userDataList = userDb?.userDataDao()?.getAll()
-            mUiHandler.post({
-                if (userDataList != null)
-                    globalUsers = userDataList
-            })
+    private fun updatePlayers() {
+        doAsync {
+            val database = AppDatabase.getInstance(context = this@GameMenuActivity)
+            val customers = database.userDataDao().all
+
+            uiThread {
+                globalUsers = customers
+            }
         }
-        mDbWorkerThread.postTask(task, "fetch users")
     }
 
-    private fun findUserByIdInDb(userId: String): List<UserData> {
-        var userDataListResult: List<UserData> = arrayListOf()
-        val task = Runnable {
-            val userDataList = userDb?.userDataDao()?.findByName(userId)
-            mUiHandler.post({
-                if (userDataList != null && !userDataList.isEmpty())
-                    userDataListResult = userDataList
-            })
+    private fun insertUser(userData: UserData) {
+        doAsync {
+            val database = AppDatabase.getInstance(context = this@GameMenuActivity)
+            database.userDataDao().insert(userData)
         }
-        mDbWorkerThread.postTask(task, "find user by id")
-        return userDataListResult
     }
 
-    private fun insertUserDataInDb(userData: UserData) {
-        val task = Runnable { userDb?.userDataDao()?.insert(userData) }
-        mDbWorkerThread.postTask(task, "insert user data")
-    }
-
-    private fun updateUserDataInDb(vararg userData: UserData) {
-        val task = Runnable { userDb?.userDataDao()?.update(*userData) }
-        mDbWorkerThread.postTask(task, "update user data")
-    }
+//    private fun fetchUserDataFromDb() {
+//        val task = Runnable {
+//            mUiHandler.post({
+//                    globalUsers = userDb.userDataDao().all
+//            })
+//        }
+//        mDbWorkerThread.postTask(task, "fetch users")
+//    }
+//
+//    private fun findUserByNameInDb(userName: String) : List<UserData> {
+//        var userDataListResult: List<UserData> = arrayListOf()
+//        val task = Runnable {
+//            val userDataList = userDb.userDataDao().findByName(userName)
+//            mUiHandler.post({
+//                if (!userDataList.isEmpty())
+//                    userDataListResult = userDataList
+//            })
+//        }
+//        mDbWorkerThread.postTask(task, "find user by id")
+//        return userDataListResult
+//    }
+//
+//    private fun insertUserDataInDb(userData: UserData) {
+//        val task = Runnable { userDb.userDataDao().insert(userData) }
+//        mDbWorkerThread.postTask(task, "insert user data")
+//    }
+//
+//    private fun updateUserDataInDb(userData: List<UserData>) {
+//        val task = Runnable { userDb.userDataDao().update(userData) }
+//        mDbWorkerThread.postTask(task, "update user data")
+//    }
 
     override fun onDestroy() {
-        UserDataBase.destroyInstance()
-        mDbWorkerThread.quit()
+        playerManager.detachTempProperties()
+//        UserDataBase.destroyInstance()
+//        mDbWorkerThread.quit()
         super.onDestroy()
     }
 }

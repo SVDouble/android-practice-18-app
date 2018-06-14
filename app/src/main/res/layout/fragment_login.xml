@@ -56,13 +56,13 @@
                     android:inputType="text"
                     android:hint="@string/lf_search_title"/>
 
-                <ImageView
+                <ImageButton
                     android:id="@+id/lf.search.status"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_alignParentEnd="true"
-                    android:src="@drawable/ic_more_vert"
+                    android:src="@android:drawable/ic_menu_search"
                     android:contentDescription="@string/lf_search_status_descr" />
             </RelativeLayout>
 

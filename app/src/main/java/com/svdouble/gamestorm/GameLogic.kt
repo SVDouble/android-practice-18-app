@@ -5,9 +5,6 @@ import java.util.*
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-/* Base resources */
-//const val PLAYER_ICONS = arrayOf(R.drawable.)
-
 /* Base classes */
 data class Cell2D(val x: Int, val y: Int) {
     operator fun plus(n: Int) = Cell2D(x + n, y + n)
@@ -87,6 +84,12 @@ class ResourceManager {
 
     fun <T: Any> detachProperty(pData: PropertyData<T>) {
         sections[pData.section]!!.remove(pData.name)
+    }
+
+    fun detachTempProperties() {
+        for ((key, value) in sections)
+            if (!key.isEmpty() && key[0] == '~')
+                sections.remove(key)
     }
 
     fun <T : Any> getProperty(pData: PropertyData<T>): T =
