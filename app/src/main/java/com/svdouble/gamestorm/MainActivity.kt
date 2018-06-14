@@ -18,6 +18,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.game_card.view.*
 
 const val DEBUG_LOG_KEY = "GameStormApp"
 const val INTENT_ID_KEY = "GAME_ID"
