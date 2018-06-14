@@ -91,7 +91,7 @@ class TGameHandler(private val game: TGame, context: Context) : BaseGameHandler(
 
 
 class TGame(private val context: Context)
-    : BaseGame(GAME_TICTACTOE_ID, 5.0, R.string.game_t_title, R.string.game_t_description, R.drawable.ic_launcher_foreground),
+    : BaseGame(GAME_TICTACTOE_ID, 5.0, R.string.game_t_title, R.string.game_t_description, R.drawable.tictactoeicon),
         PropertyContainer {
     val manager = ResourceManager() // should be init. before all bindings
     val playerManager = ResourceManager()
