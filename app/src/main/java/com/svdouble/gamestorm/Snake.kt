@@ -21,7 +21,7 @@ data class Piece(val x: Float, val y: Float)
 class Snake(colorIn:Int, size:Float) {
 
     var color = colorIn
-    var body: Vector<Piece> = Vector() 
+    var body: Vector<Piece> = Vector()
 
     var deltaX: Float = 1f
     var deltaY: Float = 0f
@@ -73,7 +73,7 @@ class Snake(colorIn:Int, size:Float) {
     fun move() {
         makeHead()
         if(tailisnear != 1){
-          body.removeElement(body.lastElement()); tailisnear = 0}
+            body.removeElement(body.lastElement()); tailisnear = 0}
     }
 }
 
@@ -212,7 +212,7 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
         )
 
         if(l == 1) {
-               canvas.drawText(
+            canvas.drawText(
                     "$etapl",
                     (snake.fieldWidth / 2f) - 15f,
                     snake.fieldHeight / 2f ,
@@ -240,10 +240,9 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
             k = 1
         }
         for (i in 1..(snake.body.size - 1))
-            if (snake.body[i].x == snake.body[0].x && snake.body[i].y == snake.body[0].y) {
+            if (snake.body[i].x  == snake.body[0].x + snake.deltaX && snake.body[i].y == snake.body[0].y + snake.deltaY) {
                 timer.cancel();MP1.stop();MP2.start();l=1
             }
-
         postInvalidate()
     }
 
