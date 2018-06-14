@@ -1,32 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CanvasActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".CanvasActivity">
 
-    <!--<View-->
-        <!--android:id="@+id/t_view"-->
-        <!--android:layout_width="200dp"-->
-        <!--android:layout_height="200dp"/>-->
-
-    <TextView
+    <!-- Header -->
+    <RelativeLayout
+        android:id="@+id/bc.header"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Hello!"
-        android:textSize="50sp"/>
+        android:layout_height="wrap_content">
 
+        <TextView
+            android:id="@+id/bc.header.title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/bc.header.menu"
+            android:textSize="36sp"
+            android:textAlignment="center"/>
 
-    <ViewStub
-        android:id="@+id/test_v"
-        android:layout_width="200dp"
-        android:layout_height="200dp" />
+        <ImageButton
+            android:id="@+id/bc.header.menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_more_vert" />
+    </RelativeLayout>
 
+    <!-- Content -->
     <LinearLayout
-        android:id="@+id/lin"
+        android:id="@+id/bc.content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/bc.footer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/bc.header">
+
+    </LinearLayout>
+
+    <!-- Footer -->
+    <android.support.constraint.Barrier
+        android:id="@+id/bc.barrier"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"/>
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="bc.content" />
 
-</LinearLayout>
+    <LinearLayout
+        android:id="@+id/bc.footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

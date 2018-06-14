@@ -14,8 +14,13 @@ class CanvasActivity : AppCompatActivity() {
         when(intent.getIntExtra(INTENT_ID_KEY, -1)) {
             GAME_TICTACTOE_ID -> {
                 setContentView(R.layout.activity_base_canvas)
-                val tGame = Games.getInstance(lin.context).games[0] as TGame
-                lin.addView(tGame.getDrawEngine())
+                val tGame = Games.getInstance(bc_content.context).games[0] as TGame
+                bc_header_title.text = resources.getString(tGame.titleRId)
+                        bc_content.addView(tGame.getDrawEngine())
+                if (bc_content.layoutParams.width > bc_content.layoutParams.height)
+                    bc_content.layoutParams.width = bc_content.layoutParams.height
+                else
+                    bc_content.layoutParams.height = bc_content.layoutParams.width
                 if (tGame.getState() == BaseGameHandler.State.INIT)
                     tGame.startGame()
             }
@@ -28,7 +33,7 @@ class CanvasActivity : AppCompatActivity() {
 
         when(intent.getIntExtra(INTENT_ID_KEY, -1)) {
             GAME_TICTACTOE_ID -> {
-                lin.removeAllViews()
+                bc_content.removeAllViews()
             }
         }
     }

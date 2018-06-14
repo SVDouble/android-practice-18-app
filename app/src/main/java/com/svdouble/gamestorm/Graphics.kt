@@ -7,7 +7,7 @@ import android.graphics.Paint
 import android.view.MotionEvent
 import android.view.View
 
-const val bottomMargin: Float = 3f / 4
+const val bottomMargin: Float = 1f
 
 /* Handle calls */
 sealed class BaseCall
