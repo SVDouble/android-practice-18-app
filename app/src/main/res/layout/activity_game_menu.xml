@@ -6,7 +6,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GameMenuActivity">
+    android:background="#FFADADFD"
+    tools:context=".GameMenuActivity"
+    tools:ignore="ExtraText">
 
     <TextView
         android:id="@+id/gm.title"
@@ -17,6 +19,10 @@
         app:layout_constraintTop_toTopOf="parent"
         android:textAlignment="center"
         android:textSize="36sp"/>
+
+
+
+
 
     <RelativeLayout
         android:id="@+id/gm.header"
@@ -107,21 +113,23 @@
 
             <ImageButton
                 android:id="@+id/gm.buttons.play"
+                style="@style/AppTheme.MenuButton"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                style="@style/AppTheme.MenuButton"
-                android:text="@string/gi_button_play"
-                android:contentDescription="@string/gi_button_play" />
+                android:layout_margin="@dimen/card_margin"
+                android:layout_weight="1.15"
+                android:contentDescription="@string/gi_button_play"
+                android:text="@string/gi_button_play" />
 
             <ImageButton
-                android:id="@+id/gm.buttons.settings"
+                android:id="@+id/gm.buttons.scoreboard"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="0.85"
+                android:layout_margin="@dimen/card_margin"
                 style="@style/AppTheme.MenuButton"
                 android:text="@string/gi_button_settings"
-                android:contentDescription="@string/gi_button_settings" />
+                android:contentDescription="@string/gi_button_scoreboard" />
         </TableRow>
 
         <TableRow
@@ -131,22 +139,24 @@
             android:layout_weight="1">
 
             <ImageButton
+                android:id="@+id/gm.buttons.settings"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1.15"
+                android:layout_margin="@dimen/card_margin"
+                style="@style/AppTheme.MenuButton"
+                android:text="@string/gi_button_wiki"
+                android:contentDescription="@string/gi_button_settings" />
+
+            <ImageButton
                 android:id="@+id/gm.buttons.wiki"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
-                style="@style/AppTheme.MenuButton"
-                android:text="@string/gi_button_wiki"
-                android:contentDescription="@string/gi_button_wiki" />
-
-            <ImageButton
-                android:id="@+id/gm.buttons.scoreboard"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
+                android:layout_weight="0.85"
+                android:layout_margin="@dimen/card_margin"
                 style="@style/AppTheme.MenuButton"
                 android:text="@string/gi_button_scoreboard"
-                android:contentDescription="@string/gi_button_scoreboard"/>
+                android:contentDescription="@string/gi_button_wiki"/>
         </TableRow>
 
         <TableRow

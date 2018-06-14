@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
+import com.squareup.picasso.Picasso
 import com.xwray.groupie.*
 import kotlinx.android.synthetic.main.activity_game_menu.*
 import kotlinx.android.synthetic.main.authorization_rv_item.view.*
@@ -51,6 +52,11 @@ class GameMenuActivity : AppCompatActivity(), LoginFragment.OnLoginFragmentInter
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game_menu)
+
+        Picasso.get().load(R.drawable.play3).fit().into(gm_buttons_play)
+        Picasso.get().load(R.drawable.settings).fit().into(gm_buttons_settings)
+        Picasso.get().load(R.drawable.question).rotate(270f).fit().into(gm_buttons_wiki)
+        Picasso.get().load(R.drawable.leaderboard).fit().into(gm_buttons_scoreboard)
 
         groupAdapter = GroupAdapter()
         user_list.apply {
