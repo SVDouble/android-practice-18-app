@@ -75,13 +75,13 @@
             android:textSize="36sp"
             android:text="@string/bc_info_move" />
 
-        <TextView
-            android:id="@+id/bc.info.timer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="4dp"
-            android:textSize="36sp"
-            android:text="@string/bc_info_timer" />
+        <!--<TextView-->
+            <!--android:id="@+id/bc.info.timer"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:padding="4dp"-->
+            <!--android:textSize="36sp"-->
+            <!--android:text="@string/bc_info_timer" />-->
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

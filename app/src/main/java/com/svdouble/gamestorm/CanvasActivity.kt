@@ -10,7 +10,10 @@ import org.jetbrains.anko.displayMetrics
 
 const val TAG = "GameStorm"
 
-class CanvasActivity : AppCompatActivity() {
+interface GameListener {
+    fun updateCurrentUser(name: String)
+}
+class CanvasActivity : AppCompatActivity(), GameListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,6 +50,7 @@ class CanvasActivity : AppCompatActivity() {
                 bc_content.layoutParams.height = maxSide
 
                 val tGame = Games.getInstance(bc_content.context).games[0] as TGame
+                tGame.setListener(this)
                 bc_header_title.text = resources.getString(tGame.titleRId)
                         bc_content.addView(tGame.getDrawEngine())
                 if (tGame.getState() == BaseGameHandler.State.INIT)
@@ -64,6 +68,10 @@ class CanvasActivity : AppCompatActivity() {
                 bc_content.removeAllViews()
             }
         }
+    }
+
+    override fun updateCurrentUser(name: String) {
+        bc_info_move.text = resources.getString(R.string.bc_info_move).format(name)
     }
 }
 

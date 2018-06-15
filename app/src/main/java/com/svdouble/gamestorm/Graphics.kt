@@ -81,30 +81,30 @@ class CellularDrawEngine2D(context: Context) : View(context) {
     }
 
     private fun drawChip(call: CallDrawChip, canvas: Canvas, isIcon: Boolean = false) {
-        val xxx = (call.point.x * 1f * squareSide - 1)
-        val yyy = (call.point.y * 1f * squareSide - 1)
+        val xxx = ((call.point.x - 1) * 1f * squareSide)
+        val yyy = ((call.point.y - 1) * 1f * squareSide)
         val arg11: Float = xxx - (xxx % squareSide) + squareSide / 2
         val arg22: Float = yyy + squareSide / 2 - (yyy % squareSide)
         mPaint.isAntiAlias = true
         mPaint.color = call.color
         mPaint.style = Paint.Style.STROKE
         mPaint.strokeWidth = 15F
-        if (!isIcon)
-            when (call.chipId) {
-                0 -> { // cross
-                    canvas.drawLine(arg11 - (squareSide / 2 - 5f), arg22 - (squareSide / 2 - 5f), arg11 + (squareSide / 2 - 5f), arg22 + (squareSide / 2 - 5f), mPaint)
-                    canvas.drawLine(arg11 + (squareSide / 2 - 5f), arg22 - (squareSide / 2 - 5f), arg11 - (squareSide / 2 - 5f), arg22 + (squareSide / 2 - 5f), mPaint)
-                }
-                1 -> { // circle
-                    canvas.drawCircle(arg11, arg22, squareSide / 2 - 4f, mPaint)
-                }
-            }
-        else {
+//        if (!isIcon)
+//            when (call.chipId) {
+//                0 -> { // cross
+//                    canvas.drawLine(arg11 - (squareSide / 2 - 5f), arg22 - (squareSide / 2 - 5f), arg11 + (squareSide / 2 - 5f), arg22 + (squareSide / 2 - 5f), mPaint)
+//                    canvas.drawLine(arg11 + (squareSide / 2 - 5f), arg22 - (squareSide / 2 - 5f), arg11 - (squareSide / 2 - 5f), arg22 + (squareSide / 2 - 5f), mPaint)
+//                }
+//                1 -> { // circle
+//                    canvas.drawCircle(arg11, arg22, squareSide / 2 - 4f, mPaint)
+//                }
+//            }
+//        else {
             val d = ContextCompat.getDrawable(context, call.chipId)!!
-            d.setBounds(left, top, right, bottom)
+            //d.setBounds(left, top, right, bottom)
+        d.setBounds(xxx.toInt(), yyy.toInt(), (xxx + squareSide).toInt(), (yyy + squareSide).toInt())
             d.draw(canvas)
-            //TODO()
-        }
+        //}
 
     }
 

@@ -64,6 +64,9 @@ class TGameHandler(private val game: TGame, context: Context) : BaseGameHandler(
     override var state = State.INIT
     private lateinit var players: Array<TPlayer>
     private var currentPlayer = 0
+    private var total = 0
+    private var draw = false
+    lateinit var listener: GameListener
 
     override fun dispatchEvent(event: GameEvent) {
         when (event.type) {
@@ -72,21 +75,30 @@ class TGameHandler(private val game: TGame, context: Context) : BaseGameHandler(
                 players = game.players.toArray(arrayOf())
                 drawEngine.forwardCall(CallDrawBg(Color.GREEN))
                 drawEngine.forwardCall(CallDrawGrid(gameField.rows, gameField.columns, Color.BLACK))
+                updateInfo()
             }
             GameEvent.Type.STEP -> {
                 if (state == State.RESUMED && gameField.tField[event.pos.x][event.pos.y].id == "null") {
                     drawEngine.forwardCall(CallDrawChip(event.pos + 1, players[currentPlayer].chipId))
                     gameField.tField[event.pos.x][event.pos.y](players[currentPlayer])
+                    total++
                     val checkResult = gameField.checkField()
                     if (checkResult != null) {
                         drawEngine.forwardCall(CallDrawGridCells(checkResult, Color.RED))
                         dispatchEvent(GameEvent(GameEvent.Type.STOP))
-                    } else
+                    } else {
                         currentPlayer = nextPlayer()
+                        updateInfo()
+                    }
+                    if (total == gameField.rows * gameField.columns && state != State.STOPPED) {
+                        draw = true
+                        dispatchEvent(GameEvent(GameEvent.Type.STOP))
+                    }
                 }
             }
             GameEvent.Type.STOP -> {
                 state = State.STOPPED
+                updateInfo()
             }
             else -> Log.d(TAG, "Unrecognised event")
         }
@@ -96,6 +108,15 @@ class TGameHandler(private val game: TGame, context: Context) : BaseGameHandler(
 
     fun reset() {
         gameField.reset()
+    }
+
+    private fun updateInfo() {
+        if (state != State.STOPPED)
+            listener.updateCurrentUser(players[currentPlayer].name)
+        else if (!draw)
+            listener.updateCurrentUser(players[currentPlayer].name + " won!")
+        else
+            listener.updateCurrentUser("draw!")
     }
 }
 
@@ -124,6 +145,9 @@ class TGame(private val context: Context)
         manager.unlockProperties()
         playerManager.unlockProperties()
         handler = TGameHandler(this, context)
+    }
+    fun setListener(listener: GameListener) {
+        handler.listener = listener
     }
 
     /* Property container */
