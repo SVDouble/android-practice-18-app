@@ -16,20 +16,20 @@ class Prefs (context: Context) {
 }
 
 
-val prefs: Prefs by lazy {
-    App.prefs!!
-}
-
-class App : Application() {
-    companion object {
-        var prefs: Prefs? = null
-    }
-
-    override fun onCreate() {
-        prefs = Prefs(applicationContext)
-        super.onCreate()
-    }
-}
+//val prefs: Prefs by lazy {
+//    App.prefs!!
+//}
+//
+//class App : Application() {
+//    companion object {
+//        var prefs: Prefs? = null
+//    }
+//
+//    override fun onCreate() {
+//        prefs = Prefs(applicationContext)
+//        super.onCreate()
+//    }
+//}
 
 /* Source: https://medium.com/@BladeCoder/kotlin-singletons-with-argument-194ef06edd9e */
 open class SingletonHolder<out T, in A>(creator: (A) -> T) {
