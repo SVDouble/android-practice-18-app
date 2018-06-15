@@ -112,7 +112,7 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
 
         do {
             e1 = abs(Random().nextInt() % widthPoints).toFloat()
-            e2 = abs(Random().nextInt() % ((heightPoints * freeplace).toInt())).toFloat()
+            e2 = abs(Random().nextInt() % (((heightPoints * freeplace) -1).toInt()) ).toFloat()
 
 
         } while (checkBody(e1, e2))
@@ -128,8 +128,8 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
 
         snake.start(w.toFloat(), h.toFloat())
-        widthPoints = w / pieceSideSize.toInt()
-        heightPoints = h / pieceSideSize.toInt()
+        widthPoints = (snake.fieldWidth / pieceSideSize.toInt()).toInt()
+        heightPoints = (snake.fieldHeight / pieceSideSize.toInt()).toInt()
         makeNewApple()
         super.onSizeChanged(w, h, oldw, oldh)
 
