@@ -18,7 +18,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:textAlignment="center"
-        android:textSize="36sp"/>
+        android:textSize="48sp"/>
 
     <RelativeLayout
         android:id="@+id/gm.header"
@@ -54,7 +54,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_toStartOf="@id/gm.header.button_add"
                 android:layout_marginStart="5dp"
-                android:textSize="24sp"
+                android:textSize="36sp"
                 android:text="@string/pa_title"/>
 
             <ImageButton

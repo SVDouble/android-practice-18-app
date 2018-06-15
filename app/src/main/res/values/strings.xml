@@ -45,4 +45,31 @@
     <string name="bc_info_move">Next move: %s</string>
     <string name="mc_action_fast_start">Fast start</string>
     <string name="mt_action_reset">Reset game</string>
+
+    <string name="aw_header">Wiki</string>
+    <string name="aw_footer">Back</string>
+    <string name="aw_content_tgame">
+        Field 3*3.
+Players move by turns.
+In order to put X or O, you need to click on the cell of the field.
+To win, you need to build 3 X or O in a row.
+\n
+Field 5*5.
+Players move by turns.
+In order to put X or O, you need to click on the cell of the field.
+To win, you need to build 4 X or O in a row.
+\n
+Field more than 7*7.
+Players move by turns.
+In order to put X or O, you need to click on the cell of the field.
+To win, you need to build 5 X or O in a row.
+    </string>
+    <string name="aw_content_sgame">
+        When you click on the left side of the screen, the snake turns to the left relative of its current position. When you click on the right - to the right, similarly.
+\n
+She must eat "food" until she crashes into herself. The more "food" she eats - the more its size and speed.
+\n
+When the snake grows to 0.6 from the square of the field, the player can squeeze the tail into one cell, on which the number of segments will be written.
+    </string>
+
 </resources>

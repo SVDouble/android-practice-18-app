@@ -104,6 +104,8 @@ class GameMenuActivity
                         supportFragmentManager.beginTransaction().add(R.id.activity_game_menu, LoginFragment.newInstance("", "")).commit()
                 }
 
+                gm_buttons_wiki.setOnClickListener { startActivity(Intent(this, WikiActivity::class.java).putExtra(INTENT_ID_KEY, GAME_TICTACTOE_ID))}
+
                 /* Player settings */
                 playerManager = (Games.getInstance(this).games[0] as TGame).playerManager
                 val players = playerManager.getProperty(PropertyData(arrayListOf<TPlayer>(), "players", "game_menu"))
@@ -125,6 +127,7 @@ class GameMenuActivity
                 gm_title.text = getString(sGame.titleRId)
                 gm_buttons_play.setOnClickListener { startActivity(Intent(this, SnakeActivity::class.java).putExtra(INTENT_ID_KEY, GAME_SNAKE_ID)) }
                 gm_buttons_settings.setOnClickListener { startActivity(Intent(this, GameSettingsActivity::class.java).putExtra(INTENT_ID_KEY, GAME_SNAKE_ID))}
+                gm_buttons_wiki.setOnClickListener { startActivity(Intent(this, WikiActivity::class.java).putExtra(INTENT_ID_KEY, GAME_SNAKE_ID))}
             }
         }
         gm_buttons_back.setOnClickListener { startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)) }

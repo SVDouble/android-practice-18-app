@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".WikiActivity">
+
+    <TextView
+        android:id="@+id/aw.header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:textAlignment="center"
+        android:textSize="48sp"
+        android:text="@string/aw_header"/>
+
+    <TextView
+        android:id="@+id/aw.content"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_below="@id/aw.header"
+        android:layout_above="@id/aw.footer"
+        android:padding="7dp"
+        android:textSize="24sp"/>
+
+    <Button
+        android:id="@+id/aw.footer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:textSize="24sp"
+        android:text="@string/aw_footer"
+        style="?android:attr/buttonBarButtonStyle"/>
+
+</RelativeLayout>

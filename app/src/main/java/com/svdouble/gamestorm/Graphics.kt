@@ -103,7 +103,7 @@ class CellularDrawEngine2D(context: Context) : View(context) {
             val d = ContextCompat.getDrawable(context, call.chipId)!!
             d.setBounds(left, top, right, bottom)
             d.draw(canvas)
-            TODO()
+            //TODO()
         }
 
     }

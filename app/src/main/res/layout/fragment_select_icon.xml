@@ -38,9 +38,11 @@
                 android:layout_alignParentStart="true"
                 android:layout_below="@id/si.header"
                 android:horizontalSpacing="5dp"
+                android:verticalSpacing="5dp"
                 android:isScrollContainer="false"
-                android:stretchMode="columnWidth"
-                android:numColumns="auto_fit"></GridView>
+                android:gravity="center"
+                android:stretchMode="spacingWidthUniform"
+                android:numColumns="auto_fit"/>
 
             <!-- Footer -->
             <Button

@@ -27,7 +27,7 @@ class CanvasActivity : AppCompatActivity() {
                         Log.d(TAG, "Reset game!")
                         val tGame = Games.getInstance(this).games[0] as TGame
                         tGame.reset()
-                        startActivity(Intent(this, GameMenuActivity::class.java).putExtra(INTENT_ID_KEY, GAME_TICTACTOE_ID))
+                        startActivity(Intent(this, GameMenuActivity::class.java).putExtra(INTENT_ID_KEY, GAME_TICTACTOE_ID).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
                     }
                     else -> return@setOnMenuItemClickListener false
                 }
