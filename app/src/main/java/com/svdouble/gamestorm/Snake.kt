@@ -87,16 +87,16 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
     private var widthPoints: Int = 0
     private var heightPoints: Int = 0
     private var k: Int = 0
-    private var l:Int = 0
-    private var etapl:Int = -1
+    private var l: Int = 0
+    private var etapl: Int = -1
     private var MP1 = mp1
     private var MP2: MediaPlayer = mp2
-    private var snake: Snake = Snake( col, size )
+    private var snake: Snake = Snake(col, size)
     var timer: Timer = Timer()
     var timerBlink: Timer = Timer()
-    private var timend:Long = 0L
+    private var timend: Long = 0L
 
-    var startTime : Long = 0
+    var startTime: Long = 0
 
     private var apples: MutableList<Piece> = arrayListOf()
 
@@ -112,17 +112,16 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
 
         do {
             e1 = abs(Random().nextInt() % widthPoints).toFloat()
-            e2 = abs(Random().nextInt() % ((heightPoints * freeplace).toInt()) ).toFloat()
+            e2 = abs(Random().nextInt() % ((heightPoints * freeplace).toInt())).toFloat()
 
 
         } while (checkBody(e1, e2))
         apples.add(Piece(e1, e2))
     }
 
-    fun Start( speed : Int )
-    {
+    fun Start(speed: Int) {
         timer.schedule(TimerHandle(this), 500, speed.toLong())
-        timerBlink.schedule(BlinkTimerHandle(this), 1000, 1000 )
+        timerBlink.schedule(BlinkTimerHandle(this), 1000, 1000)
         startTime = System.currentTimeMillis()
     }
 
@@ -142,7 +141,7 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
             this.xPath = event.x
             this.yPath = event.y
 
-            if(k == 1) {
+            if (k == 1) {
                 if ((this.xPath > 1f / 2f * w && snake.deltaX == 1f) || (this.xPath < 1f / 2f * w && snake.deltaX == -1f)) {
                     snake.deltaX = 0f; snake.deltaY = 1f
                 } else if ((this.xPath > 1f / 2f * w && snake.deltaX == -1f) || (this.xPath < 1f / 2f * w && snake.deltaX == 1f)) {
@@ -163,10 +162,10 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
     override fun onDraw(canvas: Canvas) {
 
         super.onDraw(canvas)
-        if(MP2.duration / 1000 == MP2.currentPosition/1000) {
+        if (MP2.duration / 1000 == MP2.currentPosition / 1000) {
             MP2.seekTo(1)
         }
-        if(MP1.duration / 1000 == MP1.currentPosition/1000) {
+        if (MP1.duration / 1000 == MP1.currentPosition / 1000) {
             MP2.seekTo(1)
         }
 
@@ -191,21 +190,19 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
             if (el_i == 1)
                 mPaint.color = snake.color
             val el = snake.body[el_i]
-            canvas.drawCircle((el.x * pieceSideSize + (el.x + 1) * pieceSideSize)/2, (el.y * pieceSideSize+(el.y + 1) * pieceSideSize)/2,
-                    pieceSideSize/2, mPaint)
+            canvas.drawCircle((el.x * pieceSideSize + (el.x + 1) * pieceSideSize) / 2, (el.y * pieceSideSize + (el.y + 1) * pieceSideSize) / 2,
+                    pieceSideSize / 2, mPaint)
         }
 
 
 
-        if( (System.currentTimeMillis()/1000) % 2L == 0L && l==0) {
+        if ((System.currentTimeMillis() / 1000) % 2L == 0L && l == 0) {
             mPaint.isAntiAlias = true
             mPaint.color = RED
             mPaint.textSize = 35.0f
             mPaint.strokeWidth = 2.0f
             mPaint.style = Paint.Style.STROKE
-        }
-        else
-        {
+        } else {
             mPaint.isAntiAlias = true
             mPaint.color = GRAY
             mPaint.textSize = 45.0f
@@ -215,22 +212,22 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
 
 
         canvas.drawText(
-                "game time:${( System.currentTimeMillis() - startTime )/1000}",
-                20f ,
-                snake.fieldHeight+25f ,
+                "game time:${(System.currentTimeMillis() - startTime) / 1000}",
+                20f,
+                snake.fieldHeight + 25f,
                 mPaint
         )
 
-        if(l == 1) {
+        if (l == 1) {
             canvas.drawText(
                     "$etapl",
                     (snake.fieldWidth / 2f) - 15f,
-                    snake.fieldHeight / 2f ,
+                    snake.fieldHeight / 2f,
                     mPaint)
             canvas.drawText(
                     "game ended:$timend",
-                    20f ,
-                    snake.fieldHeight+65f ,
+                    20f,
+                    snake.fieldHeight + 65f,
                     mPaint
             )
         }
@@ -238,8 +235,7 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
 
     }
 
-    fun onBlinkTimer()
-    {
+    fun onBlinkTimer() {
         postInvalidate()
     }
 
@@ -260,17 +256,14 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
             snake.move()
             k = 1
         }
-        for (i in 1..(snake.body.size - 1)) {
-            if (snake.body[i].x == snake.body[0].x + snake.deltaX && snake.body[i].y == snake.body[0].y + snake.deltaY) {
-                //if ((snake.body[i].x  == snake.body[0].x && snake.body[i].y == snake.body[0].y) || ((snake.body[i].x == snake.body[0].x + snake.deltaX && snake.body[i].x != snake.body.lastElement().x && snake.body[i].y == snake.body[0].y + snake.deltaY && snake.body[i].y != snake.body.lastElement().y))) {
+        for (i in 1..(snake.body.size - 1))
+            if ((snake.body[i].x  == snake.body[0].x && snake.body[i].y == snake.body[0].y) || ((snake.body[i].x == snake.body[0].x + snake.deltaX && snake.body[i].x != snake.body.lastElement().x && snake.body[i].y == snake.body[0].y + snake.deltaY && snake.body[i].y != snake.body.lastElement().y))) {
                 timer.cancel();MP1.stop();MP2.start();l = 1;timend = (System.currentTimeMillis() - startTime) / 1000
             }
-            postInvalidate()
-        }
+        postInvalidate()
+
     }
-
 }
-
 class TimerHandle(view1: SnakeDrawEngine2D) : TimerTask() {
     var view = view1
     override fun run() {
