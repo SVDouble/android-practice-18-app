@@ -18,7 +18,7 @@ class SGame(private val context: Context)
 
     val manager = ResourceManager()
 
-    private val speed by bindResource(this, 100, "Speed", "Base", { it in 100..1000 })
+    private val speed by bindResource(this, 150, "Speed", "Base", { it in 100..1000 })
     private val color by bindResource(this, "green", "Color", "Base",
             { it.toLowerCase() in arrayOf("green", "blue")})
     private val size by bindResource(this, 10, "size", "Base", { it in 1..50 })
@@ -34,7 +34,7 @@ class SGame(private val context: Context)
         }
         drawEngine = SnakeDrawEngine2D(context, clr, mp1, mp2, size.toFloat(), colap)
         mp1.start()
-        drawEngine.timer.schedule(TimerHandle(drawEngine), 500, speed.toLong())
+        drawEngine.Start(speed)
     }
 
     override fun generateGameCard() =
