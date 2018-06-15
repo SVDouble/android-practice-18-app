@@ -39,7 +39,6 @@ class CanvasActivity : AppCompatActivity(), GameListener {
             popup.show()
         }
 
-
         when(intent.getIntExtra(INTENT_ID_KEY, -1)) {
             GAME_TICTACTOE_ID -> {
                 /* Attention: linear layout returns strange width / height */

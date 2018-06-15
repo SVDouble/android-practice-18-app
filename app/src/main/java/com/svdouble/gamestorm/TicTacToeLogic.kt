@@ -24,7 +24,8 @@ class TField(private val manager: ResourceManager) : PropertyContainer {
             arrayOf(Cell2D(-1, 0), Cell2D(0, 0), Cell2D(1, 0)), // right and left
             arrayOf(Cell2D(0, -1), Cell2D(0, 0), Cell2D(0, 1)), // bottom and top
             arrayOf(Cell2D(-1, -1), Cell2D(0, 0), Cell2D(1, 1)), // diagonal
-            arrayOf(Cell2D(-1, 1), Cell2D(0, 0), Cell2D(1, -1))) // diagonal
+            arrayOf(Cell2D(-1, 1), Cell2D(0, 0), Cell2D(1, -1)), // diagonal
+            arrayOf(Cell2D(0, 0), Cell2D(1, 0), Cell2D(0, -1), Cell2D(-1, -1))) // stair
 
     fun checkField(): Array<Cell2D>? {
         for (row in 0 until rows)

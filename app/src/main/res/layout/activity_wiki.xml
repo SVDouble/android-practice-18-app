@@ -16,14 +16,19 @@
         android:textSize="48sp"
         android:text="@string/aw_header"/>
 
-    <TextView
-        android:id="@+id/aw.content"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_below="@id/aw.header"
-        android:layout_above="@id/aw.footer"
-        android:padding="7dp"
-        android:textSize="24sp"/>
+        android:layout_above="@id/aw.footer">
+
+        <TextView
+            android:id="@+id/aw.content"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:padding="7dp"
+            android:textSize="24sp"/>
+    </ScrollView>
 
     <Button
         android:id="@+id/aw.footer"

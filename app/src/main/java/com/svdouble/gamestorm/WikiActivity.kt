@@ -11,6 +11,7 @@ class WikiActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_wiki)
 
+        aw_content.typeface = Fonts.getInstance(this).neuropol
         when (intent.getIntExtra(INTENT_ID_KEY, -1)) {
             GAME_TICTACTOE_ID -> {
                 aw_footer.setOnClickListener {
