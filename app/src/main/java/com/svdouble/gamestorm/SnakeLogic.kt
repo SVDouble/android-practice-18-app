@@ -7,7 +7,7 @@ import android.media.MediaPlayer
 const val GAME_SNAKE_ID = 2
 
 class SGame(private val context: Context)
-    : BaseGame(GAME_SNAKE_ID, 6.0, R.string.game_s_title, R.string.game_s_description, R.drawable.ic_launcher_foreground),
+    : BaseGame(GAME_SNAKE_ID, 6.0, R.string.game_s_title, R.string.game_s_description, R.drawable.ic_launcher_background),
         PropertyContainer {
 
     lateinit var mp1: MediaPlayer
@@ -17,7 +17,7 @@ class SGame(private val context: Context)
 
     val manager = ResourceManager()
 
-    private val speed by bindResource(this, 125, "Speed", "Base", { it in 100..1000 })
+    private val speed by bindResource(this, 150, "Speed", "Base", { it in 100..1000 })
     private val color by bindResource(this, "green", "Color", "Base",
             { it.toLowerCase() in arrayOf("green", "blue")})
     private val size by bindResource(this, 10, "size", "Base", { it in 1..50 })
@@ -33,7 +33,7 @@ class SGame(private val context: Context)
         }
         drawEngine = SnakeDrawEngine2D(context, clr, mp1, mp2, size.toFloat(), colap)
         mp1.start()
-        drawEngine.timer.schedule(TimerHandle(drawEngine), 500, speed.toLong())
+        drawEngine.Start(speed)
     }
 
     override fun generateGameCard() =

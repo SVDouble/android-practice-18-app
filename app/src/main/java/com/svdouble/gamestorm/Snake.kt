@@ -21,16 +21,28 @@ data class Piece(val x: Float, val y: Float)
 class Snake(colorIn:Int, size:Float) {
 
     var color = colorIn
-    var body: Vector<Piece> = Vector() 
+    var body: Vector<Piece> = Vector()
 
     var deltaX: Float = 1f
     var deltaY: Float = 0f
 
     var fieldWidth: Float = 0f
     var fieldHeight: Float = 0f
-    private var SIZE :Float = size
 
-    private fun makeHead() {
+    private var SIZE :Float = size
+    private var tailisnear:Int = 0
+
+    fun makeHead() {
+        if((body[0].x + deltaX == body.lastElement().x && body[0].y + deltaY == body.lastElement().y) ||
+                ((body[0].x + deltaX) * pieceSideSize >= fieldWidth - (fieldWidth % pieceSideSize) && body.lastElement().x == 0f) ||
+                (body[0].x + deltaX < 0f && body.lastElement().x == ((fieldWidth - (fieldWidth % pieceSideSize)) / pieceSideSize) - 1f)||
+                ((body[0].y + deltaY) * pieceSideSize >= fieldHeight - (fieldHeight % pieceSideSize) && body.lastElement().y == 0f)||
+                (body[0].y + deltaY < 0f && body.lastElement().y == ((fieldHeight - (fieldHeight % pieceSideSize)) / pieceSideSize) - 1f))
+        {
+            body.removeElement(body.lastElement()); tailisnear = 1
+        }
+        else tailisnear = 0
+
         var newX = body[0].x + deltaX
         var newY = body[0].y + deltaY
         if (newX * pieceSideSize >= fieldWidth - (fieldWidth % pieceSideSize))
@@ -42,6 +54,7 @@ class Snake(colorIn:Int, size:Float) {
             newY = 0f
         if (newY < 0f)
             newY = ((fieldHeight - (fieldHeight % pieceSideSize)) / pieceSideSize) - 1f
+
 
         body.insertElementAt(Piece(newX, newY), 0)
     }
@@ -59,11 +72,12 @@ class Snake(colorIn:Int, size:Float) {
 
     fun move() {
         makeHead()
-        body.removeElement(body.lastElement())
+        if(tailisnear != 1){
+            body.removeElement(body.lastElement()); tailisnear = 0}
     }
 }
 
-class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPlayer, size:Float, private val apple_amount: Int) : View(context) {
+class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPlayer, size:Float, val apple_amount: Int) : View(context) {
 
     private val mPaint = Paint()
     private var xPath: Float = 0.0f
@@ -79,6 +93,10 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
     private var MP2: MediaPlayer = mp2
     private var snake: Snake = Snake( col, size )
     var timer: Timer = Timer()
+    var timerBlink: Timer = Timer()
+    private var timend:Long = 0L
+
+    var startTime : Long = 0
 
     private var apples: MutableList<Piece> = arrayListOf()
 
@@ -91,11 +109,21 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
     }
 
     private fun makeNewApple() {
+
         do {
             e1 = abs(Random().nextInt() % widthPoints).toFloat()
             e2 = abs(Random().nextInt() % ((heightPoints * freeplace).toInt()) ).toFloat()
+
+
         } while (checkBody(e1, e2))
         apples.add(Piece(e1, e2))
+    }
+
+    fun Start( speed : Int )
+    {
+        timer.schedule(TimerHandle(this), 500, speed.toLong())
+        timerBlink.schedule(BlinkTimerHandle(this), 1000, 1000 )
+        startTime = System.currentTimeMillis()
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -135,7 +163,7 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
     override fun onDraw(canvas: Canvas) {
 
         super.onDraw(canvas)
-        if(MP2.currentPosition/10 == 1050) {
+        if(MP2.duration / 1000 == MP2.currentPosition/1000) {
             MP2.seekTo(1)
         }
         if(MP1.duration / 1000 == MP1.currentPosition/1000) {
@@ -156,7 +184,7 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
         for (apple in apples)
             canvas.drawCircle((apple.x * pieceSideSize + (apple.x + 1) * pieceSideSize) / 2, (apple.y * pieceSideSize + (apple.y + 1) * pieceSideSize) / 2,
                     pieceSideSize / 2, mPaint)
-        //mPaint.color = snake.color
+
         for (el_i in 0 until snake.body.size) {
             if (el_i == 0)
                 mPaint.color = BLACK
@@ -167,13 +195,14 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
                     pieceSideSize/2, mPaint)
         }
 
-        if(MP2.currentPosition/750 % 2 == 0) {
+
+
+        if( (System.currentTimeMillis()/1000) % 2L == 0L && l==0) {
             mPaint.isAntiAlias = true
             mPaint.color = RED
             mPaint.textSize = 35.0f
             mPaint.strokeWidth = 2.0f
             mPaint.style = Paint.Style.STROKE
-            mPaint.setShadowLayer(5.0f, 10.0f, 10.0f, BLACK)
         }
         else
         {
@@ -182,31 +211,41 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
             mPaint.textSize = 45.0f
             mPaint.strokeWidth = 3.0f
             mPaint.style = Paint.Style.FILL_AND_STROKE
-            mPaint.setShadowLayer(5.0f, 10.0f, 10.0f, BLACK)
         }
 
 
         canvas.drawText(
-                "game time:${(MP1.currentPosition/1000)}",
+                "game time:${( System.currentTimeMillis() - startTime )/1000}",
                 20f ,
                 snake.fieldHeight+25f ,
                 mPaint
         )
 
         if(l == 1) {
-               canvas.drawText(
-                    "your score:$etapl",
-                    (snake.fieldWidth / 2f) - 105f,
+            canvas.drawText(
+                    "$etapl",
+                    (snake.fieldWidth / 2f) - 15f,
                     snake.fieldHeight / 2f ,
+                    mPaint)
+            canvas.drawText(
+                    "game ended:$timend",
+                    20f ,
+                    snake.fieldHeight+65f ,
                     mPaint
             )
-            invalidate()
         }
 
+
+    }
+
+    fun onBlinkTimer()
+    {
+        postInvalidate()
     }
 
     fun onTimer() {
         var eaten = false
+
         for (i in 0 until apples.size) {
             if ((apples[i].y == snake.body[0].y && apples[i].x == snake.body[0].x)) {
                 apples.removeAt(i)
@@ -221,12 +260,13 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
             snake.move()
             k = 1
         }
-        for (i in 1..(snake.body.size - 1))
-            if (snake.body[i].x == snake.body[0].x && snake.body[i].y == snake.body[0].y) {
-                timer.cancel();MP1.stop();MP2.start();l=1
+        for (i in 1..(snake.body.size - 1)) {
+            if (snake.body[i].x == snake.body[0].x + snake.deltaX && snake.body[i].y == snake.body[0].y + snake.deltaY) {
+                //if ((snake.body[i].x  == snake.body[0].x && snake.body[i].y == snake.body[0].y) || ((snake.body[i].x == snake.body[0].x + snake.deltaX && snake.body[i].x != snake.body.lastElement().x && snake.body[i].y == snake.body[0].y + snake.deltaY && snake.body[i].y != snake.body.lastElement().y))) {
+                timer.cancel();MP1.stop();MP2.start();l = 1;timend = (System.currentTimeMillis() - startTime) / 1000
             }
-
-        postInvalidate()
+            postInvalidate()
+        }
     }
 
 }
@@ -237,6 +277,14 @@ class TimerHandle(view1: SnakeDrawEngine2D) : TimerTask() {
         view.onTimer()
     }
 }
+
+class BlinkTimerHandle(view1: SnakeDrawEngine2D) : TimerTask() {
+    var view = view1
+    override fun run() {
+        view.onBlinkTimer()
+    }
+}
+
 
 class SnakeActivity: AppCompatActivity() {
 
