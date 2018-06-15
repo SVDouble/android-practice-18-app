@@ -19,7 +19,7 @@ interface MenuHeaderItemInteraction {
     fun updatePlayer(player: TPlayer)
 }
 
-class ExpandableMenuHeaderItem(val manager: android.support.v4.app.FragmentManager, val caller: MenuHeaderItemInteraction, val player: TPlayer, val name: String)
+class ExpandableMenuHeaderItem(val manager: android.support.v4.app.FragmentManager, val caller: MenuHeaderItemInteraction, val player: TPlayer)
     : Item<ViewHolder>(), ExpandableItem {
 
     lateinit var imageBtn: ImageButton
@@ -29,7 +29,7 @@ class ExpandableMenuHeaderItem(val manager: android.support.v4.app.FragmentManag
     override fun bind(viewHolder: ViewHolder, position: Int) {
         imageBtn = viewHolder.itemView.pa_item_player_icon
         //viewHolder.itemView.pa_item_player_icon.setImageResource(player.iconId)
-        viewHolder.itemView.pa_item_player_name.text = name
+        viewHolder.itemView.pa_item_player_name.text = player.name
         viewHolder.itemView.pa_item_expand_icon.visibility = View.GONE
 //        viewHolder.itemView.pa_item_player_name.setOnClickListener {
 //            expandableGroup.onToggleExpanded()
@@ -97,7 +97,8 @@ class GameMenuActivity
                 gm_buttons_play.setOnClickListener { startActivity(Intent(this, CanvasActivity::class.java).putExtra(INTENT_ID_KEY, GAME_TICTACTOE_ID)) }
                 gm_buttons_settings.setOnClickListener { startActivity(Intent(this, GameSettingsActivity::class.java).putExtra(INTENT_ID_KEY, GAME_TICTACTOE_ID))}
                 gm_header_button_add.setOnClickListener {
-                    supportFragmentManager.beginTransaction().add(R.id.activity_game_menu, LoginFragment.newInstance("", "")).commit()
+                    if (checkUserAmount())
+                        supportFragmentManager.beginTransaction().add(R.id.activity_game_menu, LoginFragment.newInstance("", "")).commit()
                 }
 
                 /* Player settings */
@@ -108,7 +109,7 @@ class GameMenuActivity
                     for (player in players) {
 //                    val pData = PropertyData(player.chipId, "~${player.id}", TEMP_SECTION)
 //                    playerManager.attachProperty(pData)
-                        ExpandableGroup(ExpandableMenuHeaderItem(supportFragmentManager, this, player, "oops!"), false).apply {
+                        ExpandableGroup(ExpandableMenuHeaderItem(supportFragmentManager, this, player), false).apply {
                             //                            add(Section(PropertyWrapper(playerManager, pData).apply { changeTitle("IconId: ") }))
                             groupAdapter.add(this)
                         }
@@ -126,13 +127,13 @@ class GameMenuActivity
         gm_buttons_back.setOnClickListener { startActivity(Intent(this, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)) }
     }
 
-    override fun onNewPlayer(newPlayer: BasePlayer, name: String) {
+    override fun onNewPlayer(newPlayer: BasePlayer) {
         val player = newPlayer as TPlayer
 //        val pData = PropertyData(player.chipId, "~${player.id}", TEMP_SECTION)
         playerManager.getProperty(PropertyData(arrayListOf<TPlayer>(), "players", "game_menu")).add(player)
 //        playerManager.attachProperty(pData)
 
-        ExpandableGroup(ExpandableMenuHeaderItem(supportFragmentManager, this, player, name), false).apply {
+        ExpandableGroup(ExpandableMenuHeaderItem(supportFragmentManager, this, player), false).apply {
             //add(Section(PropertyWrapper(playerManager, pData).apply { changeTitle("IconId: ") }))
             groupAdapter.add(this)
         }
@@ -152,4 +153,7 @@ class GameMenuActivity
     override fun checkIconFree(iconId: Int) =
             playerManager.getProperty(PropertyData(arrayListOf<TPlayer>(), "players", "game_menu"))
                     .find { it.chipId == iconId } == null
+
+    private fun checkUserAmount() =
+            playerManager.getProperty(PropertyData(arrayListOf<TPlayer>(), "players", "game_menu")).size < TIcons.size
 }

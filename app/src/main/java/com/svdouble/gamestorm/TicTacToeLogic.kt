@@ -45,7 +45,7 @@ class TField(private val manager: ResourceManager) : PropertyContainer {
     }
 }
 
-data class TPlayer(override var id: String, override var iconId: Int, var chipId: Int) : BasePlayer(id, iconId) {
+data class TPlayer(override var id: String, override var iconId: Int, var chipId: Int, var name: String = "") : BasePlayer(id, iconId) {
     operator fun invoke(p: TPlayer) {
         this.id = p.id
         this.iconId = p.iconId

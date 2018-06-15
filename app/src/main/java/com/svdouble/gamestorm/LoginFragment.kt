@@ -27,8 +27,14 @@ class LoginFragment : Fragment() {
         lf_footer_apply.setOnClickListener {
             val name = lf_content_nick_field.text
             if (!name.isNullOrEmpty()) {
+                var newChipId: Int? = null
+                for (i in TIcons)
+                    if (listener!!.checkIconFree(i)) {
+                        newChipId = i
+                        break
+                    }
                 listener?.onNewPlayer(TPlayer(BasePlayer.generatePlayerId(),
-                        -1, TIcons[temp++ % TIcons.size]), name.toString())
+                        -1, newChipId!!, name.toString()))
                 activity?.supportFragmentManager?.beginTransaction()?.remove(this)?.commit()
             }
         }
@@ -49,12 +55,11 @@ class LoginFragment : Fragment() {
     }
 
     interface OnLoginFragmentInteractionListener {
-        fun onNewPlayer(newPlayer: BasePlayer, name: String)
+        fun onNewPlayer(newPlayer: BasePlayer)
+        fun checkIconFree(iconId: Int): Boolean
     }
 
     companion object {
-        var temp = 0
-
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
                 LoginFragment()
