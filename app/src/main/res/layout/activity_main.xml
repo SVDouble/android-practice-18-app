@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/header_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -21,8 +20,8 @@
             android:layout_height="match_parent"
             android:fitsSystemWindows="true"
             app:contentScrim="@color/colorPrimary"
-            app:expandedTitleMarginEnd="64dp"
-            app:expandedTitleMarginStart="48dp"
+            app:collapsedTitleGravity="center"
+            app:collapsedTitleTextAppearance="?android:textAppearanceLarge"
             app:expandedTitleTextAppearance="@android:color/transparent"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
@@ -52,7 +51,9 @@
                         android:layout_height="wrap_content"
                         android:text="@string/backdrop_title"
                         android:textColor="@android:color/white"
-                        android:textSize="@dimen/backdrop_title" />
+                        android:textSize="@dimen/backdrop_title"
+                        android:textAlignment="center"
+                        android:lineSpacingMultiplier="0.75" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -87,7 +88,7 @@
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorBgGrey"
+        android:background="@color/colorLightPrimary"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <android.support.v7.widget.RecyclerView

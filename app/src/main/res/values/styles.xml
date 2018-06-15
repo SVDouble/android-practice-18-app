@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto">
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+
+        <!--<item name="colorPrimaryText">@color/colorPrimaryText</item>-->
+        <!--<item name="colorSecondaryText">@color/colorSecondaryText</item>-->
+        <!--<item name="colorDivider">@color/colorDivider</item>-->
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <!--<item name="colorPrimaryLight">@color/colorLightPrimary</item>-->
+        <item name="colorPrimaryDark">@color/colorDarkPrimary</item>
         <item name="colorAccent">@color/colorAccent</item>
+
         <item name="cardViewStyle">@style/AppTheme.CardViewStyle</item>
     </style>
 

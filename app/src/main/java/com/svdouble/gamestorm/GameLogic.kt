@@ -5,9 +5,6 @@ import java.util.*
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
-/* Base resources */
-//const val PLAYER_ICONS = arrayOf(R.drawable.)
-
 /* Base classes */
 data class Cell2D(val x: Int, val y: Int) {
     operator fun plus(n: Int) = Cell2D(x + n, y + n)
@@ -17,13 +14,10 @@ data class Cell2D(val x: Int, val y: Int) {
 
 open class BasePlayer(open var id: String, open var iconId: Int) {
     companion object {
-        private fun ClosedRange<Char>.randomString(lenght: Int) =
-                (1..lenght)
-                        .map { (Random().nextInt(endInclusive.toInt() - start.toInt()) + start.toInt()).toChar() }
-                        .joinToString("")
+        private const val source = "abcdefghijklmnopqrstuvwxyz0123456789"
         fun generatePlayerId() : String =
-                ('a'..'z').randomString(6)
-
+                (1..6).map { source[Random().nextInt(source.length)] }
+                        .joinToString("")
     }
 }
 
@@ -79,7 +73,7 @@ class ResourceManager {
     fun <T : Any> attachProperty(pData: PropertyData<T>, pBounds: PropertyBounds<T> = PropertyBounds()) {
         val section = sections[pData.section]
         if (section != null && section.containsKey(pData.name))
-            throw IllegalArgumentException("Property already exists!")
+            throw IllegalArgumentException("Property $pData already exists!")
         if (!pBounds.checkProperty(pData.currentValue))
             throw IllegalArgumentException("Illegal default value!")
         if (section != null)
@@ -90,6 +84,12 @@ class ResourceManager {
 
     fun <T: Any> detachProperty(pData: PropertyData<T>) {
         sections[pData.section]!!.remove(pData.name)
+    }
+
+    fun detachTempProperties() {
+        for ((key, value) in sections)
+            if (!key.isEmpty() && key[0] == '~')
+                sections.remove(key)
     }
 
     fun <T : Any> getProperty(pData: PropertyData<T>): T =
@@ -114,6 +114,10 @@ class ResourceManager {
         propertiesLocked = true
         if (chained)
             containers.forEach { it.onPropertiesLock() }
+    }
+
+    fun unlockProperties() {
+        propertiesLocked = false
     }
 }
 
