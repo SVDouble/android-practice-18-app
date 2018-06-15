@@ -114,8 +114,7 @@ class CardAdapter(private val mContext: Context, private val dataset: Array<Game
         inflater.inflate(R.menu.menu_card, popup.menu)
         popup.setOnMenuItemClickListener {
             when (it.itemId) {
-                R.id.action_add_favourite -> Log.d(DEBUG_LOG_KEY, "Wow!")
-                R.id.action_rate -> Log.d(DEBUG_LOG_KEY, "Oops!")
+                R.id.mc_action_fast_start -> Log.d(TAG, "Fast start!")
                 else -> return@setOnMenuItemClickListener false
             }
             return@setOnMenuItemClickListener true

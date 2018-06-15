@@ -5,8 +5,6 @@
     <string name="settings_title">Settings</string>
     <string name="menu_logo_description">Game logo</string>
     <string name="menu_dots_description">***</string>
-    <string name="action_rate">Rate</string>
-    <string name="action_add_favourite">Like</string>
     <string name="rating_pattern">Rating: %.1f</string>
     <string name="backdrop_title">Game\nStorm</string>
     <string name="backdrop_subtitle">play now</string>
@@ -17,6 +15,7 @@
     <string name="gi_button_wiki">Wiki</string>
     <string name="gi_button_scoreboard">Scoreboard</string>
     <string name="gi_button_back">Back</string>
+
     <string name="title_activity_snake">Snake</string>
     <string name="game_t_title">Tic-tac-toe</string>
     <string name="game_t_description">Description!</string>
@@ -34,10 +33,16 @@
     <string name="lf_footer_cancel">Cancel</string>
     <string name="lf_footer_apply">Apply</string>
     <string name="lf_search_status_descr">Status</string>
+
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="game_s_title">Snake</string>
     <string name="game_s_description">Wow, snake!</string>
     <string name="si_header_title">Choose icon</string>
     <string name="si_footer_cancel">Cancel</string>
     <string name="si_footer_apply">Apply</string>
+
+    <string name="bc_info_timer">Time: %f</string>
+    <string name="bc_info_move">Next move: %s</string>
+    <string name="mc_action_fast_start">Fast start</string>
+    <string name="mt_action_reset">Reset game</string>
 </resources>

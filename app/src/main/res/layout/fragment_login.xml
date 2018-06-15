@@ -93,31 +93,31 @@
             </RelativeLayout>
 
             <!-- Icon field -->
-            <RelativeLayout
-                android:id="@+id/lf.content.icon"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_below="@id/lf.content.nick">
+            <!--<RelativeLayout-->
+            <!--android:id="@+id/lf.content.icon"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentStart="true"-->
+            <!--android:layout_below="@id/lf.content.nick">-->
 
-                <TextView
-                    android:id="@+id/lf.content.icon.title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentStart="true"
-                    android:layout_toStartOf="@id/lf.content.icon.field"
-                    android:text="@string/lf_content_icon_title" />
+            <!--<TextView-->
+            <!--android:id="@+id/lf.content.icon.title"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_alignParentStart="true"-->
+            <!--android:layout_toStartOf="@id/lf.content.icon.field"-->
+            <!--android:text="@string/lf_content_icon_title" />-->
 
-                <ImageButton
-                    android:id="@+id/lf.content.icon.field"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentEnd="true"
-                    android:inputType="text"
-                    android:hint="@string/lf_content_icon_title" />
-            </RelativeLayout>
+            <!--<ImageButton-->
+            <!--android:id="@+id/lf.content.icon.field"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_alignParentEnd="true"-->
+            <!--android:inputType="text"-->
+            <!--android:hint="@string/lf_content_icon_title" />-->
+            <!--</RelativeLayout>-->
 
             <!-- Footer -->
             <LinearLayout
@@ -125,7 +125,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_below="@id/lf.content.icon"
+                android:layout_below="@id/lf.content.nick"
                 android:weightSum="2"
                 style="?android:attr/buttonBarStyle">
 

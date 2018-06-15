@@ -43,6 +43,11 @@ class TField(private val manager: ResourceManager) : PropertyContainer {
                 }
         return null
     }
+
+    fun reset() {
+        manager.detachProperty(PropertyData(0, "rows", "Field"))
+        manager.detachProperty(PropertyData(3, "columns", "Field"))
+    }
 }
 
 data class TPlayer(override var id: String, override var iconId: Int, var chipId: Int, var name: String = "") : BasePlayer(id, iconId) {
@@ -88,6 +93,10 @@ class TGameHandler(private val game: TGame, context: Context) : BaseGameHandler(
     }
 
     private fun nextPlayer() = (currentPlayer + 1) % players.size
+
+    fun reset() {
+        gameField.reset()
+    }
 }
 
 
@@ -96,9 +105,8 @@ class TGame(private val context: Context)
         PropertyContainer {
     val manager = ResourceManager() // should be init. before all bindings
     val playerManager = ResourceManager()
-    private val hardcoreMode by bindResource(this, false, "hardcore mode", "Extra")
     val players by bindResource(playerManager, this, arrayListOf<TPlayer>(), "players", "game_menu")
-    private val handler = TGameHandler(this, context)  // should be init. after manager
+    private var handler = TGameHandler(this, context)  // should be init. after manager
 
     override fun startGame() {
         if (players.size > 0) {
@@ -111,6 +119,12 @@ class TGame(private val context: Context)
 
     fun getDrawEngine() = handler.drawEngine
     fun getState() = handler.state
+    fun reset() {
+        handler.reset()
+        manager.unlockProperties()
+        playerManager.unlockProperties()
+        handler = TGameHandler(this, context)
+    }
 
     /* Property container */
     override fun getResourceManager() = manager

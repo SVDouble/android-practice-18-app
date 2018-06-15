@@ -115,6 +115,10 @@ class ResourceManager {
         if (chained)
             containers.forEach { it.onPropertiesLock() }
     }
+
+    fun unlockProperties() {
+        propertiesLocked = false
+    }
 }
 
 class PropertyLoader<T : Any>(private val manager: ResourceManager,

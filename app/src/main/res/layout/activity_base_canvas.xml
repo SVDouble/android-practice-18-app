@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".CanvasActivity">
+    tools:context=".CanvasActivity"
+    android:background="@color/colorLightPrimary">
 
     <!-- Header -->
     <RelativeLayout
@@ -28,7 +29,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:src="@drawable/ic_more_vert" />
+            android:src="@drawable/ic_more_vert"
+            style="?android:attr/buttonBarButtonStyle" />
     </RelativeLayout>
 
     <!-- Content -->
@@ -41,7 +43,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/bc.footer"
+        app:layout_constraintBottom_toTopOf="@+id/bc.info"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/bc.header">
@@ -57,7 +59,7 @@
         app:constraint_referenced_ids="bc.content" />
 
     <LinearLayout
-        android:id="@+id/bc.footer"
+        android:id="@+id/bc.info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -66,12 +68,20 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <TextView
+            android:id="@+id/bc.info.move"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:textSize="36sp"
+            android:text="@string/bc_info_move" />
 
         <TextView
+            android:id="@+id/bc.info.timer"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:padding="4dp"
+            android:textSize="36sp"
+            android:text="@string/bc_info_timer" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

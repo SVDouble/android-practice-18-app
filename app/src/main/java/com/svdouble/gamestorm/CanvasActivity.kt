@@ -1,7 +1,10 @@
 package com.svdouble.gamestorm
 
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.PopupMenu
+import android.util.Log
 import kotlinx.android.synthetic.main.activity_base_canvas.*
 import org.jetbrains.anko.displayMetrics
 
@@ -12,12 +15,32 @@ class CanvasActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        setContentView(R.layout.activity_base_canvas)
+        bc_header_title.typeface = Fonts.getInstance(this).quicksand
+        bc_header_menu.setOnClickListener {
+            val popup = PopupMenu(this, it)
+            val inflater = popup.menuInflater
+            inflater.inflate(R.menu.menu_tgame, popup.menu)
+            popup.setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.mt_action_reset -> {
+                        Log.d(TAG, "Reset game!")
+                        val tGame = Games.getInstance(this).games[0] as TGame
+                        tGame.reset()
+                        startActivity(Intent(this, GameMenuActivity::class.java).putExtra(INTENT_ID_KEY, GAME_TICTACTOE_ID))
+                    }
+                    else -> return@setOnMenuItemClickListener false
+                }
+                return@setOnMenuItemClickListener true
+            }
+            popup.show()
+        }
+
+
         when(intent.getIntExtra(INTENT_ID_KEY, -1)) {
             GAME_TICTACTOE_ID -> {
-                setContentView(R.layout.activity_base_canvas)
-
                 /* Attention: linear layout returns strange width / height */
-                val maxH = displayMetrics.heightPixels - bc_header.layoutParams.height - bc_footer.layoutParams.height
+                val maxH = displayMetrics.heightPixels - bc_header.layoutParams.height - bc_info.layoutParams.height
                 val maxW = displayMetrics.widthPixels
                 val maxSide = if (maxH > maxW) maxW else maxH
                 bc_content.layoutParams.width = maxSide

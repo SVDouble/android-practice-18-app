@@ -94,10 +94,13 @@ class GameMenuActivity
                 /* Basic buttons */
                 val tGame = Games.getInstance(this).games[0] as TGame
                 gm_title.text = getString(tGame.titleRId)
-                gm_buttons_play.setOnClickListener { startActivity(Intent(this, CanvasActivity::class.java).putExtra(INTENT_ID_KEY, GAME_TICTACTOE_ID)) }
+                gm_buttons_play.setOnClickListener {
+                    if (getUserAmount() > 0)
+                        startActivity(Intent(this, CanvasActivity::class.java).putExtra(INTENT_ID_KEY, GAME_TICTACTOE_ID))
+                }
                 gm_buttons_settings.setOnClickListener { startActivity(Intent(this, GameSettingsActivity::class.java).putExtra(INTENT_ID_KEY, GAME_TICTACTOE_ID))}
                 gm_header_button_add.setOnClickListener {
-                    if (checkUserAmount())
+                    if (getUserAmount() < TIcons.size)
                         supportFragmentManager.beginTransaction().add(R.id.activity_game_menu, LoginFragment.newInstance("", "")).commit()
                 }
 
@@ -154,6 +157,6 @@ class GameMenuActivity
             playerManager.getProperty(PropertyData(arrayListOf<TPlayer>(), "players", "game_menu"))
                     .find { it.chipId == iconId } == null
 
-    private fun checkUserAmount() =
-            playerManager.getProperty(PropertyData(arrayListOf<TPlayer>(), "players", "game_menu")).size < TIcons.size
+    private fun getUserAmount() =
+            playerManager.getProperty(PropertyData(arrayListOf<TPlayer>(), "players", "game_menu")).size
 }
