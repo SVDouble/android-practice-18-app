@@ -194,29 +194,30 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
                     pieceSideSize / 2, mPaint)
         }
 
-
-
-        if ((System.currentTimeMillis() / 1000) % 2L == 0L && l == 0) {
-            mPaint.isAntiAlias = true
-            mPaint.color = RED
-            mPaint.textSize = 35.0f
-            mPaint.strokeWidth = 2.0f
-            mPaint.style = Paint.Style.STROKE
-        } else {
-            mPaint.isAntiAlias = true
-            mPaint.color = GRAY
-            mPaint.textSize = 45.0f
-            mPaint.strokeWidth = 3.0f
-            mPaint.style = Paint.Style.FILL_AND_STROKE
-        }
-
-
+        mPaint.isAntiAlias = true
+        mPaint.color = RED
+        mPaint.textSize = 35.0f
+        mPaint.strokeWidth = 2.0f
+        mPaint.style = Paint.Style.STROKE
         canvas.drawText(
                 "game time:${(System.currentTimeMillis() - startTime) / 1000}",
                 20f,
                 snake.fieldHeight + 25f,
                 mPaint
         )
+        if ((System.currentTimeMillis() / 1000) % 2L == 0L && l != 0) {
+            mPaint.isAntiAlias = true
+            mPaint.color = RED
+            mPaint.textSize = 35.0f
+            mPaint.strokeWidth = 2.0f
+            mPaint.style = Paint.Style.STROKE
+        } else {
+            mPaint.color = GRAY
+            mPaint.textSize = 45.0f
+            mPaint.strokeWidth = 3.0f
+            mPaint.style = Paint.Style.FILL_AND_STROKE
+        }
+
 
         if (l == 1) {
             canvas.drawText(
