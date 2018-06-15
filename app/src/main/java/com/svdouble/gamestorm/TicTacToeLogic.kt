@@ -6,6 +6,7 @@ import android.util.Log
 
 /* TicTacToe */
 const val GAME_TICTACTOE_ID = 1
+val TIcons = arrayOf(R.drawable.t_icon_1, R.drawable.t_icon_2, R.drawable.t_icon_3, R.drawable.t_icon_4)
 
 class TField(private val manager: ResourceManager) : PropertyContainer {
 
@@ -91,7 +92,7 @@ class TGameHandler(private val game: TGame, context: Context) : BaseGameHandler(
 
 
 class TGame(private val context: Context)
-    : BaseGame(GAME_TICTACTOE_ID, 5.0, R.string.game_t_title, R.string.game_t_description, R.drawable.tictactoeicon),
+    : BaseGame(GAME_TICTACTOE_ID, 5.0, R.string.game_t_title, R.string.game_t_description, R.drawable.tictactoe),
         PropertyContainer {
     val manager = ResourceManager() // should be init. before all bindings
     val playerManager = ResourceManager()

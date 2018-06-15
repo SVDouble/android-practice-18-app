@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    android:id="@+id/fragment_login"
+<FrameLayout android:id="@+id/fragment_login"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="8dp"
     tools:context=".LoginFragment"
     android:theme="@style/AppTheme"
-    android:clickable="true">
+    android:clickable="true"
+    android:focusable="true">
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
@@ -32,39 +31,39 @@
                 android:text="@string/lf_header_title"/>
 
             <!-- Search -->
-            <RelativeLayout
-                android:id="@+id/lf.search"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/lf.header">
+            <!--<RelativeLayout-->
+            <!--android:id="@+id/lf.search"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_below="@id/lf.header">-->
 
-                <TextView
-                    android:id="@+id/lf.search.title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentStart="true"
-                    android:text="@string/lf_search_title"/>
+            <!--<TextView-->
+            <!--android:id="@+id/lf.search.title"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_alignParentStart="true"-->
+            <!--android:text="@string/lf_search_title"/>-->
 
-                <EditText
-                    android:id="@+id/lf.search.field"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toEndOf="@id/lf.search.title"
-                    android:layout_toStartOf="@id/lf.search.status"
-                    android:inputType="text"
-                    android:hint="@string/lf_search_title"/>
+            <!--<EditText-->
+            <!--android:id="@+id/lf.search.field"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_toEndOf="@id/lf.search.title"-->
+            <!--android:layout_toStartOf="@id/lf.search.status"-->
+            <!--android:inputType="text"-->
+            <!--android:hint="@string/lf_search_title"/>-->
 
-                <ImageButton
-                    android:id="@+id/lf.search.status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentEnd="true"
-                    android:src="@android:drawable/ic_menu_search"
-                    android:contentDescription="@string/lf_search_status_descr" />
-            </RelativeLayout>
+            <!--<ImageButton-->
+            <!--android:id="@+id/lf.search.status"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_alignParentEnd="true"-->
+            <!--android:src="@android:drawable/ic_menu_search"-->
+            <!--android:contentDescription="@string/lf_search_status_descr" />-->
+            <!--</RelativeLayout>-->
 
             <!-- Nickname field -->
             <RelativeLayout
@@ -72,7 +71,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:layout_below="@id/lf.search">
+                android:layout_below="@id/lf.header">
 
                 <TextView
                     android:id="@+id/lf.content.nick.title"
@@ -93,31 +92,31 @@
                     android:hint="@string/lf_content_nick_title"/>
             </RelativeLayout>
 
-            <!-- Password field -->
+            <!-- Icon field -->
             <RelativeLayout
-                android:id="@+id/lf.content.psw"
+                android:id="@+id/lf.content.icon"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
                 android:layout_below="@id/lf.content.nick">
 
                 <TextView
-                    android:id="@+id/lf.content.psw.title"
+                    android:id="@+id/lf.content.icon.title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_alignParentStart="true"
-                    android:text="@string/lf_content_psw_title"/>
+                    android:layout_toStartOf="@id/lf.content.icon.field"
+                    android:text="@string/lf_content_icon_title" />
 
-                <EditText
-                    android:id="@+id/lf.content.psw.field"
-                    android:layout_width="0dp"
+                <ImageButton
+                    android:id="@+id/lf.content.icon.field"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_alignParentEnd="true"
-                    android:layout_toEndOf="@id/lf.content.psw.title"
                     android:inputType="text"
-                    android:hint="@string/lf_content_psw_title"/>
+                    android:hint="@string/lf_content_icon_title" />
             </RelativeLayout>
 
             <!-- Footer -->
@@ -126,7 +125,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:layout_below="@id/lf.content.psw"
+                android:layout_below="@id/lf.content.icon"
                 android:weightSum="2"
                 style="?android:attr/buttonBarStyle">
 

@@ -8,7 +8,7 @@
     <string name="action_rate">Rate</string>
     <string name="action_add_favourite">Like</string>
     <string name="rating_pattern">Rating: %.1f</string>
-    <string name="backdrop_title">Super game</string>
+    <string name="backdrop_title">Game\nStorm</string>
     <string name="backdrop_subtitle">play now</string>
     <string name="header_bg_description">Beautiful background</string>
 
@@ -23,13 +23,13 @@
     <string name="recycler_item_hint">decimal</string>
     <string name="settings_prop_name_pattern">%s: </string>
 
-    <string name="pa_title">Players</string>
+    <string name="pa_title">Players:</string>
     <string name="pa_button_cancel">Cancel</string>
     <string name="pa_button_start">Start</string>
 
-    <string name="lf_header_title">Login</string>
-    <string name="lf_content_nick_title">Nick</string>
-    <string name="lf_content_psw_title">Password</string>
+    <string name="lf_header_title">Add user</string>
+    <string name="lf_content_nick_title">Nickname</string>
+    <string name="lf_content_icon_title">Icon</string>
     <string name="lf_search_title">Search</string>
     <string name="lf_footer_cancel">Cancel</string>
     <string name="lf_footer_apply">Apply</string>
@@ -37,4 +37,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="game_s_title">Snake</string>
     <string name="game_s_description">Wow, snake!</string>
+    <string name="si_header_title">Choose icon</string>
+    <string name="si_footer_cancel">Cancel</string>
+    <string name="si_footer_apply">Apply</string>
 </resources>

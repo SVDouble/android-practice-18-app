@@ -4,6 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.GridLayoutManager
+import android.view.View
+import android.widget.ImageButton
 import com.squareup.picasso.Picasso
 import com.xwray.groupie.*
 import kotlinx.android.synthetic.main.activity_game_menu.*
@@ -11,17 +13,35 @@ import kotlinx.android.synthetic.main.authorization_rv_item.view.*
 
 private const val TEMP_SECTION = "~game_menu_temp"
 
-class ExpandableMenuHeaderItem(val player: TPlayer, val name: String) : Item<ViewHolder>(), ExpandableItem {
+interface MenuHeaderItemInteraction {
+    var groupAdapter: GroupAdapter<ViewHolder>
+    fun destroyItem(player: TPlayer)
+    fun updatePlayer(player: TPlayer)
+}
+
+class ExpandableMenuHeaderItem(val manager: android.support.v4.app.FragmentManager, val caller: MenuHeaderItemInteraction, val player: TPlayer, val name: String)
+    : Item<ViewHolder>(), ExpandableItem {
+
+    lateinit var imageBtn: ImageButton
 
     private lateinit var expandableGroup: ExpandableGroup
 
     override fun bind(viewHolder: ViewHolder, position: Int) {
+        imageBtn = viewHolder.itemView.pa_item_player_icon
         //viewHolder.itemView.pa_item_player_icon.setImageResource(player.iconId)
         viewHolder.itemView.pa_item_player_name.text = name
-
-        viewHolder.itemView.pa_item_player_name.setOnClickListener {
-            expandableGroup.onToggleExpanded()
-            viewHolder.itemView.pa_item_expand_icon.setImageResource(getIcon())
+        viewHolder.itemView.pa_item_expand_icon.visibility = View.GONE
+//        viewHolder.itemView.pa_item_player_name.setOnClickListener {
+//            expandableGroup.onToggleExpanded()
+//            viewHolder.itemView.pa_item_expand_icon.setImageResource(getIcon())
+//        }
+        Picasso.get().load(player.chipId).fit().centerInside()
+                .into(viewHolder.itemView.pa_item_player_icon)
+        viewHolder.itemView.pa_item_player_icon.setOnClickListener {
+            manager.beginTransaction().add(R.id.activity_game_menu, SelectIconFragment.newInstance(this, player)).commit()
+        }
+        viewHolder.itemView.pa_item_button_delete.setOnClickListener {
+            caller.destroyItem(player)
         }
     }
 
@@ -38,21 +58,26 @@ class ExpandableMenuHeaderItem(val player: TPlayer, val name: String) : Item<Vie
                 android.R.drawable.arrow_down_float
 }
 
-class GameMenuActivity : AppCompatActivity(), LoginFragment.OnLoginFragmentInteractionListener {
+class GameMenuActivity
+    : AppCompatActivity(),
+        LoginFragment.OnLoginFragmentInteractionListener,
+        MenuHeaderItemInteraction,
+        SelectIconFragment.OnSelectIconFragmentInteractionListener {
 
+    private val groupList = mutableListOf<String>()
     private lateinit var playerManager: ResourceManager
     private lateinit var viewAdapter: CardAdapter
     private lateinit var viewManager: GridLayoutManager
-    private lateinit var groupAdapter: GroupAdapter<ViewHolder>
+    override lateinit var groupAdapter: GroupAdapter<ViewHolder>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_game_menu)
 
-        Picasso.get().load(R.drawable.play3).fit().into(gm_buttons_play)
-        Picasso.get().load(R.drawable.settings).fit().into(gm_buttons_settings)
-        Picasso.get().load(R.drawable.question).rotate(270f).fit().into(gm_buttons_wiki)
-        Picasso.get().load(R.drawable.leaderboard).fit().into(gm_buttons_scoreboard)
+        Picasso.get().load(R.drawable.play_icon).fit().centerInside().into(gm_buttons_play)
+        Picasso.get().load(R.drawable.settings_icon).fit().centerInside().into(gm_buttons_settings)
+        Picasso.get().load(R.drawable.info_icon).fit().centerInside().into(gm_buttons_wiki)
+        Picasso.get().load(R.drawable.leaderboard_icon).fit().centerInside().into(gm_buttons_scoreboard)
 
         groupAdapter = GroupAdapter()
         user_list.apply {
@@ -63,6 +88,7 @@ class GameMenuActivity : AppCompatActivity(), LoginFragment.OnLoginFragmentInter
         }
 
 
+        gm_title.typeface = Fonts.getInstance(this).quicksand
         when(intent.getIntExtra(INTENT_ID_KEY, -1)) {
             GAME_TICTACTOE_ID -> {
                 /* Basic buttons */
@@ -78,16 +104,17 @@ class GameMenuActivity : AppCompatActivity(), LoginFragment.OnLoginFragmentInter
                 playerManager = (Games.getInstance(this).games[0] as TGame).playerManager
                 val players = playerManager.getProperty(PropertyData(arrayListOf<TPlayer>(), "players", "game_menu"))
 
-                /*
-                for (player in players) {
-                    val pData = PropertyData(player.chipId, "~${player.id}", TEMP_SECTION)
-                    playerManager.attachProperty(pData)
-                    ExpandableGroup(ExpandableMenuHeaderItem(player), false).apply {
-                        add(Section(PropertyWrapper(playerManager, pData).apply { changeTitle("IconId: ") }))
-                        groupAdapter.add(this)
+                if (groupList.isEmpty())
+                    for (player in players) {
+//                    val pData = PropertyData(player.chipId, "~${player.id}", TEMP_SECTION)
+//                    playerManager.attachProperty(pData)
+                        ExpandableGroup(ExpandableMenuHeaderItem(supportFragmentManager, this, player, "oops!"), false).apply {
+                            //                            add(Section(PropertyWrapper(playerManager, pData).apply { changeTitle("IconId: ") }))
+                            groupAdapter.add(this)
+                        }
+                        groupList.add(player.id)
                     }
-                }
-                */
+
             }
             GAME_SNAKE_ID -> {
                 val sGame = Games.getInstance(this).games[1] as SGame
@@ -101,12 +128,28 @@ class GameMenuActivity : AppCompatActivity(), LoginFragment.OnLoginFragmentInter
 
     override fun onNewPlayer(newPlayer: BasePlayer, name: String) {
         val player = newPlayer as TPlayer
-        val pData = PropertyData(player.chipId, "~${player.id}", TEMP_SECTION)
+//        val pData = PropertyData(player.chipId, "~${player.id}", TEMP_SECTION)
         playerManager.getProperty(PropertyData(arrayListOf<TPlayer>(), "players", "game_menu")).add(player)
-        playerManager.attachProperty(pData)
-        ExpandableGroup(ExpandableMenuHeaderItem(player, name), false).apply {
-            add(Section(PropertyWrapper(playerManager, pData).apply { changeTitle("IconId: ") }))
+//        playerManager.attachProperty(pData)
+
+        ExpandableGroup(ExpandableMenuHeaderItem(supportFragmentManager, this, player, name), false).apply {
+            //add(Section(PropertyWrapper(playerManager, pData).apply { changeTitle("IconId: ") }))
             groupAdapter.add(this)
         }
+        groupList.add(player.id)
     }
+
+    override fun destroyItem(player: TPlayer) {
+        playerManager.getProperty(PropertyData(arrayListOf<TPlayer>(), "players", "game_menu")).remove(player)
+        groupAdapter.removeGroup(groupList.indexOf(player.id))
+        groupList.remove(player.id)
+    }
+
+    override fun updatePlayer(player: TPlayer) {
+        playerManager.getProperty(PropertyData(arrayListOf<TPlayer>(), "players", "game_menu")).find { it.id == player.id }!!.apply { chipId = player.chipId }
+    }
+
+    override fun checkIconFree(iconId: Int) =
+            playerManager.getProperty(PropertyData(arrayListOf<TPlayer>(), "players", "game_menu"))
+                    .find { it.chipId == iconId } == null
 }
