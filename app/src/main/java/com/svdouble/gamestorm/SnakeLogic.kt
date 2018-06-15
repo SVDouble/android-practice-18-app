@@ -33,7 +33,7 @@ class SGame(private val context: Context)
         }
         drawEngine = SnakeDrawEngine2D(context, clr, mp1, mp2, size.toFloat(), colap)
         mp1.start()
-        drawEngine.timer.schedule(TimerHandle(drawEngine), 500, speed.toLong())
+        drawEngine.Start(speed)
     }
 
     override fun generateGameCard() =

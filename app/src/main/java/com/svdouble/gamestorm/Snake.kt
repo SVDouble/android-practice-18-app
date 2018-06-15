@@ -93,6 +93,9 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
     private var MP2: MediaPlayer = mp2
     private var snake: Snake = Snake( col, size )
     var timer: Timer = Timer()
+    var timerBlink: Timer = Timer()
+
+    var startTime : Long = 0
 
     private var apples: MutableList<Piece> = arrayListOf()
 
@@ -113,6 +116,13 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
 
         } while (checkBody(e1, e2))
         apples.add(Piece(e1, e2))
+    }
+
+    fun Start( speed : Int )
+    {
+        timer.schedule(TimerHandle(this), 500, speed.toLong())
+        timerBlink.schedule(BlinkTimerHandle(this), 1000, 1000 )
+        startTime = System.currentTimeMillis()
     }
 
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
@@ -185,13 +195,13 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
         }
 
 
-        if(MP2.currentPosition/1000 % 2 == 0) {
+
+        if( (System.currentTimeMillis()/1000) % 2L == 0L && l==0) {
             mPaint.isAntiAlias = true
             mPaint.color = RED
             mPaint.textSize = 35.0f
             mPaint.strokeWidth = 2.0f
             mPaint.style = Paint.Style.STROKE
-            mPaint.setShadowLayer(5.0f, 10.0f, 10.0f, BLACK)
         }
         else
         {
@@ -200,12 +210,11 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
             mPaint.textSize = 45.0f
             mPaint.strokeWidth = 3.0f
             mPaint.style = Paint.Style.FILL_AND_STROKE
-            mPaint.setShadowLayer(5.0f, 10.0f, 10.0f, BLACK)
         }
 
 
         canvas.drawText(
-                "game time:${(MP1.currentPosition/1000)}",
+                "game time:${( System.currentTimeMillis() - startTime )/1000}",
                 20f ,
                 snake.fieldHeight+25f ,
                 mPaint
@@ -218,13 +227,19 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
                     snake.fieldHeight / 2f ,
                     mPaint
             )
-            invalidate()
         }
 
+
+    }
+
+    fun onBlinkTimer()
+    {
+        postInvalidate()
     }
 
     fun onTimer() {
         var eaten = false
+
         for (i in 0 until apples.size) {
             if ((apples[i].y == snake.body[0].y && apples[i].x == snake.body[0].x)) {
                 apples.removeAt(i)
@@ -240,7 +255,7 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
             k = 1
         }
         for (i in 1..(snake.body.size - 1))
-            if (snake.body[i].x  == snake.body[0].x + snake.deltaX && snake.body[i].y == snake.body[0].y + snake.deltaY) {
+            if ((snake.body[i].x  == snake.body[0].x && snake.body[i].y == snake.body[0].y) || ((snake.body[i].x == snake.body[0].x + snake.deltaX && snake.body[i].x != snake.body.lastElement().x) && (snake.body[i].y == snake.body[0].y + snake.deltaY && snake.body[i].y != snake.body.lastElement().y))) {
                 timer.cancel();MP1.stop();MP2.start();l=1
             }
         postInvalidate()
@@ -254,6 +269,14 @@ class TimerHandle(view1: SnakeDrawEngine2D) : TimerTask() {
         view.onTimer()
     }
 }
+
+class BlinkTimerHandle(view1: SnakeDrawEngine2D) : TimerTask() {
+    var view = view1
+    override fun run() {
+        view.onBlinkTimer()
+    }
+}
+
 
 class SnakeActivity: AppCompatActivity() {
 
