@@ -88,7 +88,7 @@ class SnakeDrawEngine2D(context: Context, col:Int, mp1:MediaPlayer, mp2:MediaPla
     private var heightPoints: Int = 0
     private var k: Int = 0
     private var l: Int = 0
-    private var etapl: Int = -1
+    private var etapl: Int = 0
     private var MP1 = mp1
     private var MP2: MediaPlayer = mp2
     private var snake: Snake = Snake(col, size)
