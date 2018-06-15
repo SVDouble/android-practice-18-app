@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFADADFD"
+    android:background="@color/colorLightPrimary"
     tools:context=".GameMenuActivity"
     tools:ignore="ExtraText">
 
@@ -19,10 +19,6 @@
         app:layout_constraintTop_toTopOf="parent"
         android:textAlignment="center"
         android:textSize="36sp"/>
-
-
-
-
 
     <RelativeLayout
         android:id="@+id/gm.header"
@@ -41,7 +37,7 @@
             android:layout_width="match_parent"
             android:layout_marginStart="60dp"
             android:layout_marginEnd="60dp"
-            android:background="@android:color/darker_gray"
+            android:background="@color/colorDivider"
             android:layout_alignParentTop="true"/>
 
         <RelativeLayout
@@ -57,6 +53,7 @@
                 android:layout_centerVertical="true"
                 android:layout_alignParentStart="true"
                 android:layout_toStartOf="@id/gm.header.button_add"
+                android:layout_marginStart="5dp"
                 android:textSize="24sp"
                 android:text="@string/pa_title"/>
 
@@ -67,7 +64,9 @@
                 android:foregroundGravity="right|center_vertical"
                 android:src="@android:drawable/ic_input_add"
                 android:layout_centerVertical="true"
-                android:layout_alignParentEnd="true"/>
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="5dp"
+                android:background="?android:selectableItemBackground" />
         </RelativeLayout>
 
         <android.support.v7.widget.RecyclerView
@@ -85,7 +84,7 @@
             android:layout_width="match_parent"
             android:layout_marginStart="60dp"
             android:layout_marginEnd="60dp"
-            android:background="@android:color/darker_gray"
+            android:background="@color/colorDivider"
             android:layout_alignParentBottom="true"/>
     </RelativeLayout>
 
@@ -116,20 +115,20 @@
                 style="@style/AppTheme.MenuButton"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_margin="@dimen/card_margin"
-                android:layout_weight="1.15"
+                android:layout_weight="1"
                 android:contentDescription="@string/gi_button_play"
-                android:text="@string/gi_button_play" />
+                android:text="@string/gi_button_play"
+                android:background="?android:selectableItemBackground" />
 
             <ImageButton
                 android:id="@+id/gm.buttons.scoreboard"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="0.85"
-                android:layout_margin="@dimen/card_margin"
+                android:layout_weight="1"
                 style="@style/AppTheme.MenuButton"
                 android:text="@string/gi_button_settings"
-                android:contentDescription="@string/gi_button_scoreboard" />
+                android:contentDescription="@string/gi_button_scoreboard"
+                android:background="?android:selectableItemBackground" />
         </TableRow>
 
         <TableRow
@@ -142,21 +141,21 @@
                 android:id="@+id/gm.buttons.settings"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="1.15"
-                android:layout_margin="@dimen/card_margin"
+                android:layout_weight="1"
                 style="@style/AppTheme.MenuButton"
                 android:text="@string/gi_button_wiki"
-                android:contentDescription="@string/gi_button_settings" />
+                android:contentDescription="@string/gi_button_settings"
+                android:background="?android:selectableItemBackground" />
 
             <ImageButton
                 android:id="@+id/gm.buttons.wiki"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="0.85"
-                android:layout_margin="@dimen/card_margin"
+                android:layout_weight="1"
                 style="@style/AppTheme.MenuButton"
                 android:text="@string/gi_button_scoreboard"
-                android:contentDescription="@string/gi_button_wiki"/>
+                android:contentDescription="@string/gi_button_wiki"
+                android:background="?android:selectableItemBackground" />
         </TableRow>
 
         <TableRow
@@ -170,7 +169,8 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="@string/gi_button_back"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="8dp"
+                android:background="?android:selectableItemBackground" />
         </TableRow>
     </TableLayout>
 </android.support.constraint.ConstraintLayout>

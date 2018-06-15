@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:textAlignment="center"
             android:gravity="center"
-            android:background="@android:color/holo_blue_light"
+            android:background="@color/colorDarkPrimary"
             android:textSize="36sp"
             android:paddingBottom="8dp"
             android:text="@string/settings_title"/>

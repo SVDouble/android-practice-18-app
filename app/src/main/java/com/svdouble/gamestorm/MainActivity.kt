@@ -18,7 +18,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.game_card.view.*
 
 const val DEBUG_LOG_KEY = "GameStormApp"
 const val INTENT_ID_KEY = "GAME_ID"
@@ -32,6 +31,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
+
+        /* Font */
+        header_title.typeface = Fonts.getInstance(this).crackman
+        collapsing_toolbar.setCollapsedTitleTypeface(Fonts.getInstance(this).quicksand)
 
         /* Init toolbar */
         setSupportActionBar(toolbar)
@@ -64,7 +67,7 @@ class MainActivity : AppCompatActivity() {
 
         /* Init header background */
         //Glide.with(this).load(R.drawable.ic_launcher_background).into(backdrop)
-        Picasso.get().load(R.drawable.sun).into(backdrop)
+        Picasso.get().load(R.drawable.doodles_bg2).into(backdrop)
 
     }
 
@@ -111,8 +114,7 @@ class CardAdapter(private val mContext: Context, private val dataset: Array<Game
         inflater.inflate(R.menu.menu_card, popup.menu)
         popup.setOnMenuItemClickListener {
             when (it.itemId) {
-                R.id.action_add_favourite -> Log.d(DEBUG_LOG_KEY, "Wow!")
-                R.id.action_rate -> Log.d(DEBUG_LOG_KEY, "Oops!")
+                R.id.mc_action_fast_start -> Log.d(TAG, "Fast start!")
                 else -> return@setOnMenuItemClickListener false
             }
             return@setOnMenuItemClickListener true

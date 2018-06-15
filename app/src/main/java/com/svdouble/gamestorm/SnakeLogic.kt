@@ -1,13 +1,14 @@
 package com.svdouble.gamestorm
 
 import android.content.Context
-import android.graphics.Color.*
+import android.graphics.Color.BLUE
+import android.graphics.Color.GREEN
 import android.media.MediaPlayer
 
 const val GAME_SNAKE_ID = 2
 
 class SGame(private val context: Context)
-    : BaseGame(GAME_SNAKE_ID, 6.0, R.string.game_s_title, R.string.game_s_description, R.drawable.snake3),
+    : BaseGame(GAME_SNAKE_ID, 6.0, R.string.game_s_title, R.string.game_s_description, R.drawable.snake),
         PropertyContainer {
 
     lateinit var mp1: MediaPlayer
