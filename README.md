@@ -1,5 +1,7 @@
-# android-practice-18-app
+# GameStorm
 ### Developers:
  - Safronov Valentin
  - Panov Arseniy
  - Shipilov Aleksandr
+ - Litovchenko Anna
+ - Sukhotina Aleksandra
